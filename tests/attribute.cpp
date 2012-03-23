@@ -21,9 +21,9 @@
 #include "test.h"
 #include "serialize.h"
 
+#include <codash/Serialization.h>
 #include <co/co.h>
 #include <dash/dash.h>
-#include <dash/co/Serialization.h>
 
 #ifdef __APPLE__
 // following boost include causes shadowing warning. See also:

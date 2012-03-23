@@ -22,9 +22,9 @@
 #include "serialize.h"
 #include "node.h"
 
+#include <codash/Serialization.h>
 #include <co/co.h>
 #include <dash/dash.h>
-#include <dash/co/Serialization.h>
 
 
 typedef codash::Distributable< dash::Node > NodeDist;

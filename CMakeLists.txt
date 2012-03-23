@@ -38,6 +38,7 @@ find_package(Boost 1.41 REQUIRED serialization)
 link_directories(${Boost_LIBRARY_DIRS})
 find_package(DASH 0.1.0 REQUIRED)
 find_package(Collage 0.5.0 REQUIRED)
+find_package(Lunchbox 0.9.0 REQUIRED)
 
 include_directories(BEFORE ${codash_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 include_directories( ${Boost_INCLUDE_DIRS}

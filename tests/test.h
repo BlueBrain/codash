@@ -21,14 +21,22 @@
 #ifndef CODASHTEST_TEST_H
 #define CODASHTEST_TEST_H
 
-//#include <dash/detail/types.h>
-#include <stdlib.h>
 #include <lunchbox/log.h>
 #include <lunchbox/sleep.h>
 #include <lunchbox/thread.h>
-#include <fstream>
 
-#define OUTPUT co::base::Log::instance( __FILE__, __LINE__ )
+#include <fstream>
+#include <cstdlib>
+
+namespace codash
+{
+namespace test
+{
+int main( int argc, char **argv ); //!< @internal
+}
+}
+
+#define OUTPUT lunchbox::Log::instance( __FILE__, __LINE__ )
 
 #define TEST( x )                                                       \
     {                                                                   \
@@ -36,7 +44,7 @@
         if( !(x) )                                                      \
         {                                                               \
             OUTPUT << #x << " failed" << std::endl;                     \
-            ::exit( EXIT_FAILURE );                                     \
+            lunchbox::abort();                                          \
         }                                                               \
     }
 
@@ -46,27 +54,27 @@
         if( !(x) )                                                      \
         {                                                               \
             OUTPUT << #x << " failed: " << info << std::endl;           \
-            ::exit( EXIT_FAILURE );                                     \
+            lunchbox::abort();                                          \
         }                                                               \
     }
 
 namespace
 {
-class Watchdog : public co::base::Thread
+class Watchdog : public lunchbox::Thread
 {
 public:
     Watchdog( const std::string& name ) : _name( name ) {}
 
     virtual void run()
         {
-            co::base::Thread::setName( "Watchdog" );
+            lunchbox::Thread::setName( "Watchdog" );
 #ifdef DASH_TEST_RUNTIME
-            co::base::sleep( DASH_TEST_RUNTIME * 1000 );
+            lunchbox::sleep( DASH_TEST_RUNTIME * 1000 );
             TESTINFO( false, 
                       "Watchdog triggered - " << _name <<
                       " did not terminate within " << DASH_TEST_RUNTIME << "s" );
 #else
-            co::base::sleep( 60000 );
+            lunchbox::sleep( 60000 );
             TESTINFO( false, 
                       "Watchdog triggered - " << _name <<
                       " did not terminate within 1 minute" );
@@ -91,7 +99,7 @@ int main( int argc, char **argv )
 
 #ifndef CODASH_TEST_NO_WATCHDOG
     watchdog.cancel();
-    co::base::sleep( 10 ); // give watchdog time to terminate
+    lunchbox::sleep( 10 ); // give watchdog time to terminate
 #endif
     return EXIT_SUCCESS;
 }
