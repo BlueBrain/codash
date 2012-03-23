@@ -1,0 +1,7 @@
+build*
+Debug
+Release
+doc/html
+doc/man
+CMakeLists.txt.user*
+Makefile

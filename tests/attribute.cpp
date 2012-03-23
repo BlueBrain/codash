@@ -34,7 +34,7 @@
 SERIALIZABLEANY( std::vector<float> )
 
 
-typedef dash::cash::Distributable< dash::Attribute > AttributeDist;
+typedef codash::Distributable< dash::Attribute > AttributeDist;
 
 template< typename T >
 void testAttributeSerialization( co::LocalNodePtr server,
@@ -56,7 +56,7 @@ void testAttributeSerialization( co::LocalNodePtr server,
 }
 
 
-int dash::test::main( int argc, char **argv )
+int codash::test::main( int argc, char **argv )
 {
     TEST( co::init( argc, argv ));
 

@@ -27,7 +27,7 @@
 #include <dash/co/Serialization.h>
 
 
-typedef dash::cash::Distributable< dash::Node > NodeDist;
+typedef codash::Distributable< dash::Node > NodeDist;
 
 void testNodeSerialization( co::LocalNodePtr server, co::LocalNodePtr client )
 {
@@ -46,7 +46,7 @@ void testNodeSerialization( co::LocalNodePtr server, co::LocalNodePtr client )
 }
 
 
-int dash::test::main( int argc, char **argv )
+int codash::test::main( int argc, char **argv )
 {
     TEST( co::init( argc, argv ));
 

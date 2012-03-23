@@ -21,7 +21,6 @@
 #ifndef CODASH_SERIALIZATION_H
 #define CODASH_SERIALIZATION_H
 
-#include <co/types.h>
 #include <co/object.h>
 #include <co/dataOStream.h>
 #include <co/dataIStream.h>
@@ -33,10 +32,6 @@
 SERIALIZABLEANY( co::uint128_t )
 
 
-/**
- * Namespace providing functionality to distributed dash object through the
- * Collage library.
- */
 namespace codash
 {
 
