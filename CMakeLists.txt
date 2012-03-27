@@ -70,4 +70,5 @@ add_subdirectory(codash)
 add_subdirectory(tests)
 
 include(CTest)
+add_custom_target(package COMMENT "Packaging not done yet")
 # include(CPackConfig)
