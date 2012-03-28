@@ -42,7 +42,6 @@ if(BOOST_ROOT)
 endif()
 find_package(Boost 1.41 REQUIRED serialization)
 link_directories(${Boost_LIBRARY_DIRS})
-find_package(Lunchbox 0.9.0 REQUIRED)
 add_definitions(-DBOOST_ALL_NO_LIB) # Don't use 'pragma lib' on Windows
 
 find_package(DASH 0.1.0 REQUIRED)
