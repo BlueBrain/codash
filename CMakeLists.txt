@@ -34,8 +34,17 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+if(MSVC)
+  option(Boost_USE_STATIC_LIBS "Use boost static libs" ON)
+endif()
+if(BOOST_ROOT)
+  set(Boost_NO_SYSTEM_PATHS TRUE)
+endif()
 find_package(Boost 1.41 REQUIRED serialization)
 link_directories(${Boost_LIBRARY_DIRS})
+find_package(Lunchbox 0.9.0 REQUIRED)
+add_definitions(-DBOOST_ALL_NO_LIB) # Don't use 'pragma lib' on Windows
+
 find_package(DASH 0.1.0 REQUIRED)
 find_package(Collage 0.5.0 REQUIRED)
 find_package(Lunchbox 0.9.0 REQUIRED)
