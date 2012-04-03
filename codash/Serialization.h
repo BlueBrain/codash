@@ -7,12 +7,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -29,19 +29,17 @@
 
 #include <dash/detail/AnySerialization.h>
 
-SERIALIZABLEANY( co::uint128_t )
+SERIALIZABLEANY( lunchbox::uint128_t )
 
 
 namespace codash
 {
 
 /** Wraps a ref counted object in a distributable Collage object. */
-template< class T >
+template< class T, class ValuePtr = lunchbox::RefPtr< T > >
 class Distributable : public co::Object
 {
 public:
-    typedef co::base::RefPtr< T > ValuePtr;
-
     Distributable()
         : value_( new T )
     {}

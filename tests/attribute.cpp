@@ -62,7 +62,7 @@ int codash::test::main( int argc, char **argv )
 
     co::ConnectionDescriptionPtr connDesc = new co::ConnectionDescription;
 
-    co::base::RNG rng;
+    lunchbox::RNG rng;
     connDesc->type = co::CONNECTIONTYPE_TCPIP;
     connDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
     connDesc->setHostname( "localhost" );
@@ -87,7 +87,8 @@ int codash::test::main( int argc, char **argv )
     testAttributeSerialization( server, client, 5.f );
     testAttributeSerialization( server, client, false );
     testAttributeSerialization( server, client, std::string( "blablub" ));
-    testAttributeSerialization( server, client, co::uint128_t( 12345, 54321 ));
+    testAttributeSerialization( server, client,
+                                lunchbox::uint128_t( 12345, 54321 ));
     Foo foo = {42, 1.5f, false, "blablub"};
     testAttributeSerialization( server, client, foo );
     std::vector< float > values( 10, 2.34f );

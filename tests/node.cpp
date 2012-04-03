@@ -52,7 +52,7 @@ int codash::test::main( int argc, char **argv )
 
     co::ConnectionDescriptionPtr connDesc = new co::ConnectionDescription;
 
-    co::base::RNG rng;
+    lunchbox::RNG rng;
     connDesc->type = co::CONNECTIONTYPE_TCPIP;
     connDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
     connDesc->setHostname( "localhost" );
