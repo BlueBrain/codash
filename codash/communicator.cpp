@@ -19,51 +19,163 @@
  */
 
 #include "communicator.h"
+#include "distributable.h"
+#include "objectFactory.h"
 
 #include <co/connectionDescription.h>
 #include <co/init.h>
 #include <co/objectMap.h>
 
+#include <dash/Context.h>
 #include <dash/Node.h>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/function/function0.hpp>
 
 namespace codash
 {
 
-static uint128_t groupID_(0x2c5886200d8346a6, 0x9142013e70d0c699);
-static uint128_t typeInit_(0xb7d0b4e451094167, 0xb67d43efce1f75d2);
+typedef Distributable< dash::Node > NodeDist;
+typedef boost::shared_ptr< NodeDist > NodeDistPtr;
+typedef boost::shared_ptr< dash::Commit > CommitPtr;
+typedef Distributable< dash::Commit, CommitPtr > CommitDist;
+typedef boost::shared_ptr< CommitDist > CommitDistPtr;
+
+typedef std::map< dash::NodePtr, NodeDistPtr > NodeMap;
+typedef std::map< CommitPtr, CommitDistPtr > CommitMap;
+
+typedef boost::function< void() > WorkFunc;
 
 typedef Distributable< dash::Node > NodeDist;
 typedef Distributable< dash::Commit,
                        boost::shared_ptr< dash::Commit > > CommitDist;
 
+static uint128_t groupID_(0x2c5886200d8346a6, 0x9142013e70d0c699);
+static uint128_t typeInit_(0xb7d0b4e451094167, 0xb67d43efce1f75d2);
+
+
+namespace detail
+{
+class Communicator
+{
+public:
+    Communicator()
+        : owner( false )
+        , context()
+        , localNode()
+        , proxyNode()
+        , proxyComm( 0 )
+        , objectMap( 0 )
+        , factory()
+        , nodeMap()
+        , commitMap()
+        , workQueue()
+    {}
+
+    ~Communicator()
+    {
+        if( localNode )
+        {
+            localNode->deregisterObject( objectMap );
+
+            if( proxyNode )
+                localNode->disconnect( proxyNode );
+        }
+
+        delete proxyComm;
+        delete objectMap;
+
+        if( owner )
+        {
+            localNode->close();
+            co::exit();
+        }
+    }
+
+    void init()
+    {
+        objectMap = new co::ObjectMap( localNode, factory );
+        localNode->registerObject( objectMap );
+        localNode->registerPushHandler( groupID_,
+                boost::bind( &Communicator::handleInit, this, _1, _2, _3, _4 ));
+    }
+
+    void handleInit( const uint128_t& groupID, const uint128_t& typeID,
+                     const uint128_t& objectID, co::DataIStream& istream )
+    {
+        EQASSERT( groupID == groupID_ );
+        EQASSERT( typeID == typeInit_ );
+
+        proxyComm = new codash::Communicator;
+        proxyComm->applyInstanceData( istream );
+        workQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+                      localNode.get(), proxyComm, objectID, co::VERSION_NONE ));
+    }
+
+    void processMappings()
+    {
+        BOOST_FOREACH( const WorkFunc& func, workQueue )
+        {
+            func();
+        }
+        workQueue.clear();
+    }
+
+    bool owner;
+
+    dash::Context context;
+
+    co::LocalNodePtr localNode;
+    co::NodePtr proxyNode;
+    codash::Communicator* proxyComm;
+
+    co::ObjectMap* objectMap;
+    ObjectFactory factory;
+
+    NodeMap nodeMap;
+    CommitMap commitMap;
+
+    std::deque<WorkFunc> workQueue;
+};
+}
 
 Communicator::Communicator()
     : co::Object()
-    , proxyComm_( 0 )
+    , impl_( new detail::Communicator )
 {
 }
 
-bool Communicator::init( int argc, char** argv,
-                         co::ConnectionDescriptionPtr conn )
+Communicator::Communicator( int argc, char** argv,
+                            co::ConnectionDescriptionPtr conn )
+    : co::Object()
+    , impl_( new detail::Communicator )
 {
-    if( !conn || !co::init( argc, argv ))
-        return false;
+    if( conn && co::init( argc, argv ))
+    {
+        impl_->localNode = new co::LocalNode;
+        impl_->owner = true;
+        impl_->localNode->addConnectionDescription( conn );
+        impl_->localNode->listen();
+    }
+    impl_->localNode->registerObject( this );
+    impl_->init();
+}
 
-    localNode_ = new co::LocalNode;
-    localNode_->addConnectionDescription( conn );
-    if( !localNode_->listen( ))
-        return false;
+Communicator::Communicator( co::LocalNodePtr localNode )
+    : co::Object()
+    , impl_( new detail::Communicator )
+{
+    impl_->localNode = localNode;
+    impl_->localNode->registerObject( this );
+    impl_->init();
+}
 
-    localNode_->registerObject( this );
-    objectMap_ = new co::ObjectMap( localNode_, factory_ );
-    localNode_->registerObject( objectMap_ );
-    localNode_->registerPushHandler( groupID_,
-               boost::bind( &Communicator::_handleInit, this, _1, _2, _3, _4 ));
-
-    return true;
+Communicator::~Communicator()
+{
+    if( impl_->localNode )
+        impl_->localNode->deregisterObject( this );
+    delete impl_;
 }
 
 bool Communicator::connect( co::ConnectionDescriptionPtr conn )
@@ -71,115 +183,73 @@ bool Communicator::connect( co::ConnectionDescriptionPtr conn )
     if( !conn )
         return false;
 
-    proxyNode_ = new co::Node;
-    proxyNode_->addConnectionDescription( conn );
-    if( !localNode_->connect( proxyNode_ ))
+    impl_->proxyNode = new co::Node;
+    impl_->proxyNode->addConnectionDescription( conn );
+    if( !impl_->localNode->connect( impl_->proxyNode ))
         return false;
 
     co::Nodes nodes;
-    nodes.push_back( proxyNode_ );
+    nodes.push_back( impl_->proxyNode );
     push( groupID_, typeInit_, nodes );
     return true;
 }
 
-bool Communicator::finish()
+dash::Context& Communicator::getContext()
 {
-    if( !localNode_ )
-        return true;
-
-    localNode_->deregisterObject( this );
-    localNode_->deregisterObject( objectMap_ );
-    delete objectMap_;
-    objectMap_ = 0;
-    delete proxyComm_;
-    proxyComm_ = 0;
-
-    if( proxyNode_ )
-    {
-        if( !localNode_->disconnect( proxyNode_ ))
-            return false;
-    }
-
-    if( !localNode_->close( ))
-        return false;
-
-    return co::exit();
+    return impl_->context;
 }
 
 void Communicator::registerNode( dash::NodePtr node )
 {
-    dash::Context::getCurrent().map( node, context_ );
+    dash::Context::getCurrent().map( node, impl_->context );
 
     NodeDistPtr nodeDist( new NodeDist( node ));
-    nodeMap_[node] = nodeDist;
-    objectMap_->register_( nodeDist.get(), OBJECTTYPE_NODE );
+    impl_->nodeMap[node] = nodeDist;
+    impl_->objectMap->register_( nodeDist.get(), OBJECTTYPE_NODE );
 }
 
 void Communicator::deregisterNode( dash::NodePtr node )
 {
-    NodeDistPtr nodeDist = nodeMap_[node];
-    //objectMap_->deregister_( nodeDist );
-    nodeMap_.erase( node );
+    //NodeDistPtr nodeDist = nodeMap_[node];
+    //impl_->objectMap->deregister_( nodeDist );
+    impl_->nodeMap.erase( node );
 
-    context_.unmap( node );
+    impl_->context.unmap( node );
 }
 
 uint128_t Communicator::commit( const uint32_t incarnation )
 {
-    _processMappings();
+    impl_->processMappings();
 
-    CommitPtr newCommit( new dash::Commit( context_.commit( )));
+    CommitPtr newCommit( new dash::Commit( impl_->context.commit( )));
     CommitDistPtr commitDist( new CommitDist( newCommit ));
-    commitMap_[newCommit] = commitDist;
-    objectMap_->register_( commitDist.get(), OBJECTTYPE_COMMIT );
-    objectMap_->commit();
+    impl_->commitMap[newCommit] = commitDist;
+    impl_->objectMap->register_( commitDist.get(), OBJECTTYPE_COMMIT );
+    impl_->objectMap->commit();
 
     return co::Object::commit( incarnation );
 }
 
 uint128_t Communicator::sync( const uint128_t& version )
 {
-    _processMappings();
+    impl_->processMappings();
 
-    objectMap_->sync();
+    impl_->objectMap->sync();
 
     return co::Object::sync( version );
 }
 
 void Communicator::getInstanceData( co::DataOStream& os )
 {
-    os << objectMap_->getID();
+    os << impl_->objectMap->getID();
 }
 
 void Communicator::applyInstanceData( co::DataIStream& is )
 {
     uint128_t id;
     is >> id;
-    workQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
-                        localNode_.get(), objectMap_, id, co::VERSION_OLDEST ));
-}
-
-void Communicator::_handleInit( const uint128_t& groupID,
-                                const uint128_t& typeID,
-                                const uint128_t& objectID,
-                                co::DataIStream& istream )
-{
-    EQASSERT( groupID == groupID_ );
-    EQASSERT( typeID == typeInit_ );
-
-    proxyComm_ = new Communicator;
-    proxyComm_->applyInstanceData( istream );
-    workQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
-                    localNode_.get(), proxyComm_, objectID, co::VERSION_NONE ));
-}
-
-void Communicator::_processMappings()
-{
-    BOOST_FOREACH( const WorkFunc& func, workQueue_ )
-    {
-        func();
-    }
-    workQueue_.clear();
+    impl_->workQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+            impl_->localNode.get(), impl_->objectMap, id, co::VERSION_OLDEST ));
 }
 
 }

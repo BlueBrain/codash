@@ -37,14 +37,12 @@ int codash::test::main( int argc, char **argv )
         connDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
         connDesc->setHostname( "localhost" );
 
-        codash::Communicator sender;
-        TEST( sender.init( argc, argv, connDesc ));
+        codash::Communicator sender( argc, argv, connDesc );
 
         co::ConnectionDescriptionPtr connDesc2 = new co::ConnectionDescription;
         connDesc2->type = co::CONNECTIONTYPE_TCPIP;
         connDesc2->setHostname( "localhost" );
-        codash::Communicator receiver;
-        TEST( receiver.init( argc, argv, connDesc2 ));
+        codash::Communicator receiver( argc, argv, connDesc2 );
         TEST( receiver.connect( connDesc ));
 
         dash::NodePtr node = new dash::Node;
@@ -52,9 +50,6 @@ int codash::test::main( int argc, char **argv )
         sender.commit();
 
         receiver.sync();
-
-        TEST( receiver.finish( ));
-        TEST( sender.finish( ));
     }
 
     delete &mainCtx;

@@ -21,19 +21,14 @@
 #ifndef CODASH_COMMUNICATOR_H
 #define CODASH_COMMUNICATOR_H
 
-#include <codash/objectFactory.h>
-#include <codash/distributable.h>
-
 #include <co/object.h>
 
-#include <dash/Context.h>
+#include <dash/types.h>
 
-#include <boost/function/function0.hpp>
-
-namespace co { class ObjectMap; }
 
 namespace codash
 {
+namespace detail { class Communicator;}
 
 using lunchbox::uint128_t;
 
@@ -42,14 +37,13 @@ class Communicator : public co::Object
 {
 public:
     Communicator();
-
-    bool init( int argc, char** argv, co::ConnectionDescriptionPtr conn );
-
-    bool finish();
+    Communicator( int argc, char** argv, co::ConnectionDescriptionPtr conn );
+    Communicator( co::LocalNodePtr localNode );
+    ~Communicator();
 
     bool connect( co::ConnectionDescriptionPtr conn );
 
-    dash::Context& getContext() { return context_; }
+    dash::Context& getContext();
 
     void registerNode( dash::NodePtr node );
 
@@ -59,7 +53,7 @@ public:
 
     virtual uint128_t sync( const uint128_t& version = co::VERSION_HEAD );
 
-    virtual void nofifyNewNode( dash::NodePtr ) {}
+    virtual void nofifyNewNode( dash::NodePtr ) { EQINFO << "new node" << std::endl;}
     virtual void nofifyNewCommit( dash::Context& ) {}
 
 protected:
@@ -68,36 +62,8 @@ protected:
     virtual ChangeType getChangeType() const { return UNBUFFERED; }
 
 private:
-    void _handleInit( const uint128_t& groupID, const uint128_t& typeID,
-                      const uint128_t& objectID, co::DataIStream& istream );
-
-    void _processMappings();
-
-    friend class Client;
-
-    dash::Context context_;
-
-    co::LocalNodePtr localNode_;
-    co::NodePtr proxyNode_;
-    Communicator* proxyComm_;
-
-    co::ObjectMap* objectMap_;
-    ObjectFactory factory_;
-
-    typedef Distributable< dash::Node > NodeDist;
-    typedef boost::shared_ptr< NodeDist > NodeDistPtr;
-    typedef boost::shared_ptr< dash::Commit > CommitPtr;
-    typedef Distributable< dash::Commit, CommitPtr > CommitDist;
-    typedef boost::shared_ptr< CommitDist > CommitDistPtr;
-
-    typedef std::map< dash::NodePtr, NodeDistPtr > NodeMap;
-    typedef std::map< CommitPtr, CommitDistPtr > CommitMap;
-
-    NodeMap nodeMap_;
-    CommitMap commitMap_;
-
-    typedef boost::function< void() > WorkFunc;
-    std::deque<WorkFunc> workQueue_;
+    friend class detail::Communicator;
+    detail::Communicator* const impl_;
 };
 
 }
