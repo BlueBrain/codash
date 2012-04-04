@@ -21,7 +21,7 @@
 #include "test.h"
 #include "serialize.h"
 
-#include <codash/Serialization.h>
+#include <codash/distributable.h>
 #include <co/co.h>
 #include <dash/dash.h>
 

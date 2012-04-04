@@ -1,6 +1,6 @@
 
 /* Copyright (c) 2012, EFPL/Blue Brain Project
- *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch> 
+ *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CODASH <https://github.com/BlueBrain/codash>
  *
@@ -18,18 +18,36 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_CODASH_H
-#define CODASH_CODASH_H
+#ifndef CODASH_OBJECTFACTORY_H
+#define CODASH_OBJECTFACTORY_H
 
-/**
- * @namespace codash
- * @brief Serialization & distribution support for DASH via Collage
- *
- * Providing functionality to distribute dash objects through the
- * Collage library.
- */
+#include <co/objectFactory.h>
 
-#include <codash/communicator.h>
-#include <codash/distributable.h>
+namespace codash
+{
 
-#endif // CODASH_CODASH_H
+enum ObjectType
+{
+    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
+    OBJECTTYPE_COMMIT
+};
+
+
+class ObjectFactory : public co::ObjectFactory
+{
+public:
+    virtual co::Object* createObject( const uint32_t type )
+    {
+        switch( type )
+        {
+        case OBJECTTYPE_NODE:
+            return 0;
+        default:
+            return 0;
+        }
+    }
+};
+
+}
+
+#endif

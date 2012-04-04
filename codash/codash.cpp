@@ -18,13 +18,14 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "Serialization.h"
-
 #include <dash/Attribute.h>
 #include <dash/Node.h>
+#include <dash/Commit.h>
 
 #include <dash/detail/Attribute.h>
 #include <dash/detail/Node.h>
+#include <dash/detail/Change.h>
+#include <dash/detail/Commit.h>
 #include <dash/detail/Serializable.h>
 
 #include <co/dataOStreamArchive.h>
@@ -36,5 +37,6 @@ namespace dash
 
 SERIALIZABLEIMPL( Attribute, co::DataOStreamArchive, co::DataIStreamArchive )
 SERIALIZABLEIMPL( Node, co::DataOStreamArchive, co::DataIStreamArchive )
+SERIALIZABLEIMPL( Commit, co::DataOStreamArchive, co::DataIStreamArchive )
 
 }

@@ -1,20 +1,23 @@
 
 # Copyright (c) 2012 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
 
-configure_file("Version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/Version.h" @ONLY)
+configure_file("version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version.h" @ONLY)
 
 set(CODASH_HEADERS # public, installed
   api.h
   codash.h
-  Serialization.h
-  "${CMAKE_CURRENT_BINARY_DIR}/Version.h"
+  communicator.h
+  distributable.h
+  objectFactory.h
+  "${CMAKE_CURRENT_BINARY_DIR}/version.h"
 )
 
 set(CODASH_DETAIL_HEADERS # private, installed
 )
 
 set(CODASH_SOURCES
-  Serialization.cpp
+  codash.cpp
+  communicator.cpp
 )
 
 set(CODASH_DETAIL_SOURCES

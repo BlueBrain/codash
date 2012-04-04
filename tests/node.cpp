@@ -22,7 +22,7 @@
 #include "serialize.h"
 #include "node.h"
 
-#include <codash/Serialization.h>
+#include <codash/distributable.h>
 #include <co/co.h>
 #include <dash/dash.h>
 

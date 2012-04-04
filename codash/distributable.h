@@ -64,6 +64,8 @@ protected:
         dash::detail::serializeAny< co::DataIStreamArchive >( *value_, is );
     }
 
+    virtual ChangeType getChangeType() const { return UNBUFFERED; }
+
 private:
     ValuePtr value_;
 };
