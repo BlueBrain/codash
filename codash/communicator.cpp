@@ -95,7 +95,7 @@ public:
 
     void init()
     {
-        objectMap = new co::ObjectMap( localNode, factory );
+        objectMap = new co::ObjectMap( *localNode, factory );
         localNode->registerObject( objectMap );
         localNode->registerPushHandler( groupID_,
                 boost::bind( &Communicator::handleInit, this, _1, _2, _3, _4 ));

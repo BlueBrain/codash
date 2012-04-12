@@ -40,7 +40,7 @@ int main( int argc, char **argv ); //!< @internal
 
 #define TEST( x )                                                       \
     {                                                                   \
-        EQVERB << "Test " << #x << std::endl;                           \
+        LBVERB << "Test " << #x << std::endl;                           \
         if( !(x) )                                                      \
         {                                                               \
             OUTPUT << #x << " failed" << std::endl;                     \
@@ -50,7 +50,7 @@ int main( int argc, char **argv ); //!< @internal
 
 #define TESTINFO( x, info )                                             \
     {                                                                   \
-        EQVERB << "Test " << #x << ": " << info << std::endl;           \
+        LBVERB << "Test " << #x << ": " << info << std::endl;           \
         if( !(x) )                                                      \
         {                                                               \
             OUTPUT << #x << " failed: " << info << std::endl;           \
