@@ -35,8 +35,8 @@
 namespace dash
 {
 
-SERIALIZABLEIMPL( Attribute, co::DataOStreamArchive, co::DataIStreamArchive )
-SERIALIZABLEIMPL( Node, co::DataOStreamArchive, co::DataIStreamArchive )
-SERIALIZABLEIMPL( Commit, co::DataOStreamArchive, co::DataIStreamArchive )
+SERIALIZABLEREF( Attribute, co::DataOStreamArchive, co::DataIStreamArchive )
+SERIALIZABLEREF( Node, co::DataOStreamArchive, co::DataIStreamArchive )
+SERIALIZABLEPLAIN( Commit, co::DataOStreamArchive, co::DataIStreamArchive )
 
 }
