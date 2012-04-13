@@ -22,6 +22,7 @@
 #include "types.h"
 
 #include <co/connectionDescription.h>
+#include <co/nodePackets.h>
 #include <co/objectMap.h>
 
 #include <boost/bind.hpp>
@@ -37,7 +38,11 @@ lunchbox::Monitor<bool> monitor( false );
 
 Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
+    , proxyNode_()
     , mapQueue_()
+    , nodes_()
+    , commits_()
+    , latestCommit_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -45,7 +50,11 @@ Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
 
 Receiver::Receiver( co::LocalNodePtr localNode )
     : Communicator( localNode )
+    , proxyNode_()
     , mapQueue_()
+    , nodes_()
+    , commits_()
+    , latestCommit_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -53,6 +62,24 @@ Receiver::Receiver( co::LocalNodePtr localNode )
 
 Receiver::~Receiver()
 {
+    if( proxyNode_ )
+        localNode_->disconnect( proxyNode_ );
+}
+
+bool Receiver::connect( co::ConnectionDescriptionPtr conn )
+{
+    if( !conn )
+        return false;
+
+    proxyNode_ = new co::Node;
+    proxyNode_->addConnectionDescription( conn );
+    if( !localNode_->connect( proxyNode_ ))
+        return false;
+
+    co::UUIDPacket packet;
+    packet.custom = initCmd_;
+    proxyNode_->send( packet );
+    return true;
 }
 
 void Receiver::waitConnected()

@@ -41,7 +41,8 @@ int codash::test::main( int argc, char **argv )
 
         codash::Sender sender( argc, argv, sendDesc );
         codash::Receiver receiver( argc, argv, recvDesc );
-        TEST( sender.connectReceiver( recvDesc ));
+
+        TEST( receiver.connect( sendDesc ));
         receiver.waitConnected();
 
         dash::NodePtr node = new dash::Node;

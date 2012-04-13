@@ -26,6 +26,8 @@
 
 #include <map>
 
+namespace co { class Command; }
+
 namespace codash
 {
 namespace detail
@@ -40,8 +42,6 @@ public:
 
     ~Sender();
 
-    bool connectReceiver( co::ConnectionDescriptionPtr conn );
-
     void registerNode( dash::NodePtr node );
 
     void deregisterNode( dash::NodePtr node );
@@ -54,11 +54,11 @@ protected:
 
 private:
     void init_();
+    bool cmdConnect_( co::Command& command );
 
     typedef std::map< dash::NodePtr, NodeDistPtr > NodeMap;
     typedef std::map< CommitPtr, CommitDistPtr > CommitMap;
 
-    co::NodePtr proxyNode_;
     NodeMap nodeMap_;
     CommitMap commitMap_;
 };

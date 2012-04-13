@@ -33,6 +33,7 @@ using lunchbox::uint128_t;
 
 static uint128_t groupID_( 0x2C5886200D8346A6ull, 0x9142013E70D0C699ull );
 static uint128_t typeInit_( 0xB7D0B4E451094167ull, 0xB67D43EFCE1F75D2ull );
+static uint128_t initCmd_( 0xCAF5FEE686C14229ull, 0xA6D08A0E3610653Eull );
 
 typedef boost::shared_ptr< NodeDist > NodeDistPtr;
 typedef boost::shared_ptr< dash::Commit > CommitPtr;

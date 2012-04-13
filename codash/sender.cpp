@@ -40,11 +40,6 @@ Sender::~Sender()
     delete impl_;
 }
 
-bool Sender::connectReceiver( co::ConnectionDescriptionPtr conn )
-{
-    return impl_->connectReceiver( conn );
-}
-
 dash::Context& Sender::getContext()
 {
     return impl_->getContext();

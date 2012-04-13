@@ -20,10 +20,12 @@
 
 #include "sender.h"
 
+#include <co/command.h>
 #include <co/connectionDescription.h>
 #include <co/objectMap.h>
 
 #include <boost/foreach.hpp>
+#include <boost/bind.hpp>
 
 
 namespace codash
@@ -33,7 +35,6 @@ namespace detail
 
 Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
-    , proxyNode_()
     , nodeMap_()
     , commitMap_()
 {
@@ -42,7 +43,6 @@ Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
 
 Sender::Sender( co::LocalNodePtr localNode )
     : Communicator( localNode )
-    , proxyNode_()
     , nodeMap_()
     , commitMap_()
 {
@@ -56,9 +56,6 @@ Sender::~Sender()
     objectMap_ = 0;
     nodeMap_.clear();
     commitMap_.clear();
-
-    if( proxyNode_ )
-        localNode_->disconnect( proxyNode_ );
 }
 
 void Sender::init_()
@@ -68,20 +65,15 @@ void Sender::init_()
 
     localNode_->registerObject( this );
     localNode_->registerObject( objectMap_ );
+    localNode_->registerCustomCommand( initCmd_,
+                                  boost::bind( &Sender::cmdConnect_, this, _1 ),
+                                  localNode_->getCommandThreadQueue( ));
 }
 
-bool Sender::connectReceiver( co::ConnectionDescriptionPtr conn )
+bool Sender::cmdConnect_( co::Command& command )
 {
-    if( !conn )
-        return false;
-
-    proxyNode_ = new co::Node;
-    proxyNode_->addConnectionDescription( conn );
-    if( !localNode_->connect( proxyNode_ ))
-        return false;
-
     co::Nodes nodes;
-    nodes.push_back( proxyNode_ );
+    nodes.push_back( command.getNode( ));
     push( groupID_, typeInit_, nodes );
     return true;
 }

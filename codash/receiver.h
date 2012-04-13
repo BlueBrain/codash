@@ -65,6 +65,15 @@ public:
     /** Destruct this receiver. @version 0.1 */
     ~Receiver();
 
+    /**
+     * Connect to the given sender
+     *
+     * @param conn the connection of the sender.
+     * @return true if connect to sender was successful, false otherwise
+     * @version 0.1
+     */
+    bool connect( co::ConnectionDescriptionPtr conn );
+
     /** Completes the connection to the sender. @version 0.1 */
     void waitConnected();
 

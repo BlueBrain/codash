@@ -42,6 +42,8 @@ public:
 
     ~Receiver();
 
+    bool connect( co::ConnectionDescriptionPtr conn );
+
     void waitConnected();
 
     const dash::Nodes& getNodes() const;
@@ -63,6 +65,7 @@ private:
     typedef boost::function< void() > WorkFunc;
     typedef std::vector< uint128_t > IDVector;
 
+    co::NodePtr proxyNode_;
     std::deque< WorkFunc > mapQueue_;
     IDVector nodes_;
     IDVector commits_;

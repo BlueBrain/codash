@@ -64,15 +64,6 @@ public:
     /** Destruct this sender. @version 0.1 */
     ~Sender();
 
-    /**
-     * Connect to the given receiver
-     *
-     * @param conn the connection of the receiver.
-     * @return true if connect to receiver was successful, false otherwise
-     * @version 0.1
-     */
-    bool connectReceiver( co::ConnectionDescriptionPtr conn );
-
     /** @return the dash::Context of this sender. @version 0.1 */
     dash::Context& getContext();
 
