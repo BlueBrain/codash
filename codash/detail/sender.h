@@ -24,13 +24,12 @@
 #include "communicator.h"
 #include "types.h"
 
+#include <map>
 
 namespace codash
 {
 namespace detail
 {
-
-using lunchbox::uint128_t;
 
 class Sender : public Communicator
 {
