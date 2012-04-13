@@ -29,8 +29,6 @@
 
 #include <dash/detail/AnySerialization.h>
 
-SERIALIZABLEANY( lunchbox::uint128_t )
-
 
 namespace codash
 {
