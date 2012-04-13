@@ -18,45 +18,51 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_OBJECTFACTORY_H
-#define CODASH_OBJECTFACTORY_H
+#include "sender.h"
+#include "detail/sender.h"
 
-#include <codash/distributable.h>
-#include <co/objectFactory.h>
-#include <dash/Node.h>
-#include <dash/Commit.h>
 
 namespace codash
 {
 
-enum ObjectType
+Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
+    : impl_( new detail::Sender( argc, argv, conn ))
 {
-    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
-    OBJECTTYPE_COMMIT
-};
-
-typedef Distributable< dash::Node > NodeDist;
-typedef Distributable< dash::Commit,
-                       boost::shared_ptr< dash::Commit > > CommitDist;
-
-
-class ObjectFactory : public co::ObjectFactory
-{
-public:
-    virtual co::Object* createObject( const uint32_t type )
-    {
-        switch( type )
-        {
-        case OBJECTTYPE_NODE:
-            return new NodeDist;
-        case OBJECTTYPE_COMMIT:
-            return new CommitDist;
-        default:
-            return 0;
-        }
-    }
-};
-
 }
 
-#endif
+Sender::Sender( co::LocalNodePtr localNode )
+    : impl_( new detail::Sender( localNode ))
+{
+}
+
+Sender::~Sender()
+{
+    delete impl_;
+}
+
+bool Sender::connectReceiver( co::ConnectionDescriptionPtr conn )
+{
+    return impl_->connectReceiver( conn );
+}
+
+dash::Context& Sender::getContext()
+{
+    return impl_->getContext();
+}
+
+void Sender::registerNode( dash::NodePtr node )
+{
+    impl_->registerNode( node );
+}
+
+void Sender::deregisterNode( dash::NodePtr node )
+{
+    impl_->deregisterNode( node );
+}
+
+uint128_t Sender::commit()
+{
+    return impl_->commit();
+}
+
+}

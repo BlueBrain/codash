@@ -29,7 +29,8 @@
  * Collage library.
  */
 
-#include <codash/communicator.h>
 #include <codash/distributable.h>
+#include <codash/receiver.h>
+#include <codash/sender.h>
 
 #endif // CODASH_CODASH_H

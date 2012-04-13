@@ -28,30 +28,39 @@
 int codash::test::main( int argc, char **argv )
 {
     dash::Context& mainCtx = dash::Context::getMain( argc, argv );
-
     {
-        co::ConnectionDescriptionPtr connDesc = new co::ConnectionDescription;
-
         lunchbox::RNG rng;
-        connDesc->type = co::CONNECTIONTYPE_TCPIP;
-        connDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
-        connDesc->setHostname( "localhost" );
+        co::ConnectionDescriptionPtr sendDesc = new co::ConnectionDescription;        
+        sendDesc->type = co::CONNECTIONTYPE_TCPIP;
+        sendDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
+        sendDesc->setHostname( "localhost" );
 
-        codash::Communicator sender( argc, argv, connDesc );
+        co::ConnectionDescriptionPtr recvDesc = new co::ConnectionDescription;
+        recvDesc->type = co::CONNECTIONTYPE_TCPIP;
+        recvDesc->setHostname( "localhost" );
 
-        co::ConnectionDescriptionPtr connDesc2 = new co::ConnectionDescription;
-        connDesc2->type = co::CONNECTIONTYPE_TCPIP;
-        connDesc2->setHostname( "localhost" );
-        codash::Communicator receiver( argc, argv, connDesc2 );
-        TEST( receiver.connect( connDesc ));
+        codash::Sender sender( argc, argv, sendDesc );
+        codash::Receiver receiver( argc, argv, recvDesc );
+        TEST( sender.connectReceiver( recvDesc ));
+        receiver.waitConnected();
 
         dash::NodePtr node = new dash::Node;
         sender.registerNode( node );
-        sender.commit();
+        receiver.sync( sender.commit( ));
+        TEST( receiver.getNodes().size() == 1 );
+        dash::NodePtr newNode = receiver.getNodes()[0];
+        TEST( *node == *newNode );
 
-        receiver.sync();
+        node->insert( new dash::Attribute( 5 ) );
+        receiver.sync( sender.commit( ));
+        TEST( receiver.getNodes().size() == 1 );
+        TEST( *newNode->getAttribute( 0 ) == *node->getAttribute( 0 ));
+
+        *node->getAttribute( 0 ) = 42;
+        receiver.sync( sender.commit( ));
+        TEST( newNode->getAttribute( 0 )->get<int>() == 42 );
     }
-
+    mainCtx.commit();
     delete &mainCtx;
 
     return EXIT_SUCCESS;

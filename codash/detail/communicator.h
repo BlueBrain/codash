@@ -18,45 +18,51 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_OBJECTFACTORY_H
-#define CODASH_OBJECTFACTORY_H
+#ifndef CODASH_DETAIL_COMMUNICATOR_H
+#define CODASH_DETAIL_COMMUNICATOR_H
 
-#include <codash/distributable.h>
-#include <co/objectFactory.h>
-#include <dash/Node.h>
-#include <dash/Commit.h>
+#include <codash/objectFactory.h>
+
+#include <co/serializable.h>
+
+#include <dash/Context.h>
+
+namespace co { class ObjectMap; }
+
 
 namespace codash
 {
-
-enum ObjectType
+namespace detail
 {
-    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
-    OBJECTTYPE_COMMIT
-};
 
-typedef Distributable< dash::Node > NodeDist;
-typedef Distributable< dash::Commit,
-                       boost::shared_ptr< dash::Commit > > CommitDist;
-
-
-class ObjectFactory : public co::ObjectFactory
+class Communicator : public co::Serializable
 {
 public:
-    virtual co::Object* createObject( const uint32_t type )
+    Communicator( int argc, char** argv, co::ConnectionDescriptionPtr conn );
+
+    Communicator( co::LocalNodePtr localNode );
+
+    virtual ~Communicator() = 0;
+
+    dash::Context& getContext() { return context_; }
+
+protected:
+    virtual ChangeType getChangeType() const { return UNBUFFERED; }
+
+    enum DirtyBits
     {
-        switch( type )
-        {
-        case OBJECTTYPE_NODE:
-            return new NodeDist;
-        case OBJECTTYPE_COMMIT:
-            return new CommitDist;
-        default:
-            return 0;
-        }
-    }
+        DIRTY_NODES   = co::Serializable::DIRTY_CUSTOM << 0,
+        DIRTY_COMMITS = co::Serializable::DIRTY_CUSTOM << 1
+    };
+
+    bool owner_;
+    dash::Context context_;
+    co::LocalNodePtr localNode_;
+    co::ObjectMap* objectMap_;
+    ObjectFactory factory_;
 };
 
+}
 }
 
 #endif

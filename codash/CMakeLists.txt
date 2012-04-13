@@ -6,9 +6,10 @@ configure_file("version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version.h" @ONLY)
 set(CODASH_HEADERS # public, installed
   api.h
   codash.h
-  communicator.h
   distributable.h
   objectFactory.h
+  receiver.h
+  sender.h
   "${CMAKE_CURRENT_BINARY_DIR}/version.h"
 )
 
@@ -17,10 +18,18 @@ set(CODASH_DETAIL_HEADERS # private, installed
 
 set(CODASH_SOURCES
   codash.cpp
-  communicator.cpp
+  receiver.cpp
+  sender.cpp
 )
 
 set(CODASH_DETAIL_SOURCES
+  detail/communicator.h
+  detail/communicator.cpp
+  detail/receiver.h
+  detail/receiver.cpp
+  detail/sender.h
+  detail/sender.cpp
+  detail/types.h
 )
 
 set(CODASH_ALL ${CODASH_HEADERS} ${CODASH_SOURCES})

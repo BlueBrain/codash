@@ -18,45 +18,27 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_OBJECTFACTORY_H
-#define CODASH_OBJECTFACTORY_H
+#ifndef CODASH_DETAIL_TYPES_H
+#define CODASH_DETAIL_TYPES_H
 
-#include <codash/distributable.h>
-#include <co/objectFactory.h>
-#include <dash/Node.h>
-#include <dash/Commit.h>
+#include <codash/objectFactory.h>
+
 
 namespace codash
 {
-
-enum ObjectType
+namespace detail
 {
-    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
-    OBJECTTYPE_COMMIT
-};
 
-typedef Distributable< dash::Node > NodeDist;
-typedef Distributable< dash::Commit,
-                       boost::shared_ptr< dash::Commit > > CommitDist;
+using lunchbox::uint128_t;
 
+static uint128_t groupID_( 0x2c5886200d8346a6, 0x9142013e70d0c699 );
+static uint128_t typeInit_( 0xb7d0b4e451094167, 0xb67d43efce1f75d2 );
 
-class ObjectFactory : public co::ObjectFactory
-{
-public:
-    virtual co::Object* createObject( const uint32_t type )
-    {
-        switch( type )
-        {
-        case OBJECTTYPE_NODE:
-            return new NodeDist;
-        case OBJECTTYPE_COMMIT:
-            return new CommitDist;
-        default:
-            return 0;
-        }
-    }
-};
+typedef boost::shared_ptr< NodeDist > NodeDistPtr;
+typedef boost::shared_ptr< dash::Commit > CommitPtr;
+typedef boost::shared_ptr< CommitDist > CommitDistPtr;
 
+}
 }
 
 #endif

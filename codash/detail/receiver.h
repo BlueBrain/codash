@@ -18,54 +18,58 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_COMMUNICATOR_H
-#define CODASH_COMMUNICATOR_H
+#ifndef CODASH_DETAIL_RECEIVER_H
+#define CODASH_DETAIL_RECEIVER_H
 
-#include <co/object.h>
+#include "communicator.h"
 
-#include <dash/types.h>
+#include <boost/function/function0.hpp>
 
 
 namespace codash
 {
-namespace detail { class Communicator;}
+namespace detail
+{
 
 using lunchbox::uint128_t;
 
-/** */
-class Communicator : public co::Object
+class Receiver : public Communicator
 {
 public:
-    Communicator();
-    Communicator( int argc, char** argv, co::ConnectionDescriptionPtr conn );
-    Communicator( co::LocalNodePtr localNode );
-    ~Communicator();
+    Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn );
 
-    bool connect( co::ConnectionDescriptionPtr conn );
+    Receiver( co::LocalNodePtr localNode );
 
-    dash::Context& getContext();
+    ~Receiver();
 
-    void registerNode( dash::NodePtr node );
+    void waitConnected();
 
-    void deregisterNode( dash::NodePtr node );
-
-    virtual uint128_t commit( const uint32_t incarnation = CO_COMMIT_NEXT );
+    const dash::Nodes& getNodes() const;
 
     virtual uint128_t sync( const uint128_t& version = co::VERSION_HEAD );
 
-    virtual void nofifyNewNode( dash::NodePtr ) { EQINFO << "new node" << std::endl;}
-    virtual void nofifyNewCommit( dash::Context& ) {}
-
 protected:
-    virtual void getInstanceData( co::DataOStream& os );
-    virtual void applyInstanceData( co::DataIStream& is );
-    virtual ChangeType getChangeType() const { return UNBUFFERED; }
+    virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits );
+    virtual void deserialize( co::DataIStream& is, const uint64_t dirtyBits );
 
 private:
-    friend class detail::Communicator;
-    detail::Communicator* const impl_;
+    void handleInit_( const uint128_t& groupID, const uint128_t& typeID,
+                     const uint128_t& objectID, co::DataIStream& istream );
+
+    void processMappings_();
+
+    dash::Commit getLatestCommit_();
+
+    typedef boost::function< void() > WorkFunc;
+    typedef std::vector< uint128_t > IDVector;
+
+    std::deque< WorkFunc > mapQueue_;
+    IDVector nodes_;
+    IDVector commits_;
+    int latestCommit_;
 };
 
+}
 }
 
 #endif

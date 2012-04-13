@@ -18,45 +18,46 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_OBJECTFACTORY_H
-#define CODASH_OBJECTFACTORY_H
+#include "receiver.h"
+#include "detail/receiver.h"
 
-#include <codash/distributable.h>
-#include <co/objectFactory.h>
-#include <dash/Node.h>
-#include <dash/Commit.h>
 
 namespace codash
 {
 
-enum ObjectType
+Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
+    : impl_( new detail::Receiver( argc, argv, conn ))
 {
-    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
-    OBJECTTYPE_COMMIT
-};
-
-typedef Distributable< dash::Node > NodeDist;
-typedef Distributable< dash::Commit,
-                       boost::shared_ptr< dash::Commit > > CommitDist;
-
-
-class ObjectFactory : public co::ObjectFactory
-{
-public:
-    virtual co::Object* createObject( const uint32_t type )
-    {
-        switch( type )
-        {
-        case OBJECTTYPE_NODE:
-            return new NodeDist;
-        case OBJECTTYPE_COMMIT:
-            return new CommitDist;
-        default:
-            return 0;
-        }
-    }
-};
-
 }
 
-#endif
+Receiver::Receiver( co::LocalNodePtr localNode )
+    : impl_( new detail::Receiver( localNode ))
+{
+}
+
+Receiver::~Receiver()
+{
+    delete impl_;
+}
+
+void Receiver::waitConnected()
+{
+    impl_->waitConnected();
+}
+
+dash::Context& Receiver::getContext()
+{
+    return impl_->getContext();
+}
+
+const dash::Nodes& Receiver::getNodes() const
+{
+    return impl_->getNodes();
+}
+
+void Receiver::sync( const uint128_t& version )
+{
+    impl_->sync( version );
+}
+
+}
