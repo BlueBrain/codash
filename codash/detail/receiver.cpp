@@ -163,7 +163,7 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
         uint64_t size;
         is >> size;
         nodes_.clear();
-        nodes_.reserve( size );
+        nodes_.reserve( size_t( size ));
 
         for( uint64_t i = 0; i < size; ++i )
         {
@@ -179,9 +179,9 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
         if( commits_.size() == size )
             latestCommit_ = -1;
         else
-            latestCommit_ = size-1;
+            latestCommit_ = int(size) - 1;
         commits_.clear();
-        commits_.reserve( size );
+        commits_.reserve( size_t( size ));
 
         for( uint64_t i = 0; i < size; ++i )
         {

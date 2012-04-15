@@ -21,6 +21,8 @@
 #ifndef CODASH_SENDER_H
 #define CODASH_SENDER_H
 
+#include <codash/api.h>
+
 #include <dash/types.h>
 
 #include <co/connectionDescription.h>
@@ -56,16 +58,17 @@ public:
      * @param conn the listening connection of this sender.
      * @version 0.1
      */
-    Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn );
+    CODASH_API Sender( int argc, char** argv,
+                       co::ConnectionDescriptionPtr conn );
 
     /** Construct a sender with the given localNode. @version 0.1 */
-    Sender( co::LocalNodePtr localNode );
+    CODASH_API Sender( co::LocalNodePtr localNode );
 
     /** Destruct this sender. @version 0.1 */
-    ~Sender();
+    CODASH_API ~Sender();
 
     /** @return the dash::Context of this sender. @version 0.1 */
-    dash::Context& getContext();
+    CODASH_API dash::Context& getContext();
 
     /**
      * Register a dash::Node to this sender.
@@ -76,7 +79,7 @@ public:
      * @param node the dash::Node to be registered.
      * @version 0.1
      */
-    void registerNode( dash::NodePtr node );
+    CODASH_API void registerNode( dash::NodePtr node );
 
     /**
      * Deregister a dash::Node from this sender.
@@ -87,7 +90,7 @@ public:
      * @param node the dash::Node to be deregistered.
      * @version 0.1
      */
-    void deregisterNode( dash::NodePtr node );
+    CODASH_API void deregisterNode( dash::NodePtr node );
 
     /**
      * Commit all changes and propagate them to connected receivers.
@@ -95,7 +98,7 @@ public:
      * @return the new head version.
      * @version 0.1
      */
-    uint128_t commit();
+    CODASH_API uint128_t commit();
 
 private:
     detail::Sender* const impl_;

@@ -42,17 +42,22 @@ if(BOOST_ROOT)
 endif()
 find_package(Boost 1.41 REQUIRED serialization)
 link_directories(${Boost_LIBRARY_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 add_definitions(-DBOOST_ALL_NO_LIB) # Don't use 'pragma lib' on Windows
 
 find_package(DASH 0.1.0 REQUIRED)
+link_directories(${DASH_LIBRARY_DIRS})
+include_directories(${DASH_INCLUDE_DIRS})
+
 find_package(Collage 0.5.0 REQUIRED)
+link_directories(${COLLAGE_LIBRARY_DIRS})
+include_directories(${COLLAGE_INCLUDE_DIRS})
+
 find_package(Lunchbox 0.9.0 REQUIRED)
+link_directories(${LUNCHBOX_LIBRARY_DIRS})
+include_directories(${LUNCHBOX_INCLUDE_DIRS})
 
 include_directories(BEFORE ${codash_SOURCE_DIR} ${CMAKE_BINARY_DIR})
-include_directories( ${Boost_INCLUDE_DIRS}
-                     ${COLLAGE_INCLUDE_DIRS}
-                     ${DASH_INCLUDE_DIRS}
-                     ${LUNCHBOX_INCLUDE_DIRS})
 
 if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Winvalid-pch -Wnon-virtual-dtor -Wsign-promo -Wshadow -Winit-self -Wno-unknown-pragmas -Wno-unused-parameter -Wno-write-strings")

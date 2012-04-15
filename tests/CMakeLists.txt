@@ -3,21 +3,10 @@
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
-if(WIN32)
-  get_filename_component(CO_DIR ${COLLAGE_LIBRARIES} PATH)
-  set(CO_DIR "${CO_DIR}/../bin")
-  file(COPY "${CO_DIR}/pthread.dll"
-       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug)
-  file(COPY "${CO_DIR}/pthread.dll"
-       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
-  file(COPY "${CO_DIR}/pthread.dll"
-       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/RelWithDebInfo)
-  file(COPY "${CO_DIR}/pthread.dll"
-       DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MinSizeRel)
-  # dont set output dir, tests want to be with DLLs on Windows - no rpath
-else()
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${codash_BINARY_DIR}/tests)
+if(NOT WIN32) # tests want to be with DLLs on Windows - no rpath
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests)
 endif()
+
 
 file(GLOB_RECURSE TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
 

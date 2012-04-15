@@ -21,6 +21,8 @@
 #ifndef CODASH_RECEIVER_H
 #define CODASH_RECEIVER_H
 
+#include <codash/api.h>
+
 #include <dash/types.h>
 
 #include <co/connectionDescription.h>
@@ -57,13 +59,14 @@ public:
      * @param conn the listening connection of this receiver.
      * @version 0.1
      */
-    Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn );
+    CODASH_API Receiver( int argc, char** argv,
+                         co::ConnectionDescriptionPtr conn );
 
     /** Construct a receiver with the given localNode. @version 0.1 */
-    Receiver( co::LocalNodePtr localNode );
+    CODASH_API Receiver( co::LocalNodePtr localNode );
 
     /** Destruct this receiver. @version 0.1 */
-    ~Receiver();
+    CODASH_API ~Receiver();
 
     /**
      * Connect to the given sender
@@ -72,16 +75,16 @@ public:
      * @return true if connect to sender was successful, false otherwise
      * @version 0.1
      */
-    bool connect( co::ConnectionDescriptionPtr conn );
+    CODASH_API bool connect( co::ConnectionDescriptionPtr conn );
 
     /** Completes the connection to the sender. @version 0.1 */
-    void waitConnected();
+    CODASH_API void waitConnected();
 
     /** @return the dash::Context of this receiver. @version 0.1 */
-    dash::Context& getContext();
+    CODASH_API dash::Context& getContext();
 
     /** @return the list of all received dash::Nodes. @version 0.1 */
-    const dash::Nodes& getNodes() const;
+    CODASH_API const dash::Nodes& getNodes() const;
 
     /**
      * Receive new changes from the connected sender.
@@ -89,7 +92,7 @@ public:
      * @param version the version to synchronize
      * @version 0.1
      */
-    void sync( const uint128_t& version = co::VERSION_HEAD );
+    CODASH_API void sync( const uint128_t& version = co::VERSION_HEAD );
 
 private:
     detail::Receiver* const impl_;

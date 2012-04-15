@@ -18,6 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "api.h"
+
 #include <dash/Attribute.h>
 #include <dash/Node.h>
 #include <dash/Commit.h>
@@ -35,6 +37,9 @@
 namespace dash
 {
 
+// TODO: temp workaround for Win32 build
+#undef DASH_API
+#define DASH_API CODASH_API
 SERIALIZABLEREF( Attribute, co::DataOStreamArchive, co::DataIStreamArchive )
 SERIALIZABLEREF( Node, co::DataOStreamArchive, co::DataIStreamArchive )
 SERIALIZABLEPLAIN( Commit, co::DataOStreamArchive, co::DataIStreamArchive )
