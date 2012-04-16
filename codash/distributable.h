@@ -51,6 +51,11 @@ public:
         return value_;
     }
 
+    void setValue( ValuePtr newValue )
+    {
+        value_ = newValue;
+    }
+
 protected:
     virtual void getInstanceData( co::DataOStream& os )
     {

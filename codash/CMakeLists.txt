@@ -7,7 +7,6 @@ set(CODASH_HEADERS # public, installed
   api.h
   codash.h
   distributable.h
-  objectFactory.h
   receiver.h
   sender.h
   "${CMAKE_CURRENT_BINARY_DIR}/version.h"
@@ -25,6 +24,8 @@ set(CODASH_SOURCES
 set(CODASH_DETAIL_SOURCES
   detail/communicator.h
   detail/communicator.cpp
+  detail/objectFactory.h
+  detail/objectMap.h
   detail/receiver.h
   detail/receiver.cpp
   detail/sender.h

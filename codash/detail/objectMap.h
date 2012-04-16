@@ -18,48 +18,28 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_DETAIL_SENDER_H
-#define CODASH_DETAIL_SENDER_H
+#ifndef CODASH_DETAIL_OBJECTMAP_H
+#define CODASH_DETAIL_OBJECTMAP_H
 
-#include "communicator.h"
-#include "types.h"
+#include "objectFactory.h"
 
-#include <map>
+#include <co/objectMap.h>
 
-namespace co { class Command; }
 
 namespace codash
 {
 namespace detail
 {
 
-class Sender : public Communicator
+class ObjectMap : public co::ObjectMap
 {
 public:
-    Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn );
-
-    Sender( co::LocalNodePtr localNode );
-
-    ~Sender();
-
-    void registerNode( dash::NodePtr node );
-
-    void deregisterNode( dash::NodePtr node );
-
-    virtual uint128_t commit( const uint32_t incarnation = CO_COMMIT_NEXT );
+    ObjectMap( co::ObjectHandler& handler, ObjectFactory& factory )
+        : co::ObjectMap( handler, factory )
+    {}
 
 protected:
-    virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits );
-    virtual void deserialize( co::DataIStream& is, const uint64_t dirtyBits );
-
-private:
-    void init_();
-    bool cmdConnect_( co::Command& command );
-
-    typedef std::map< dash::NodePtr, NodeDistPtr > NodeMap;
-
-    NodeMap nodeMap_;
-    CommitDistPtr commit_;
+    virtual ChangeType getChangeType() const { return DELTA; }
 };
 
 }

@@ -22,11 +22,16 @@
 #define CODASH_OBJECTFACTORY_H
 
 #include <codash/distributable.h>
+
 #include <co/objectFactory.h>
+
 #include <dash/Node.h>
 #include <dash/Commit.h>
 
+
 namespace codash
+{
+namespace detail
 {
 
 enum ObjectType
@@ -57,6 +62,7 @@ public:
     }
 };
 
+}
 }
 
 #endif

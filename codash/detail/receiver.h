@@ -70,8 +70,7 @@ private:
     co::NodePtr proxyNode_;
     std::deque< WorkFunc > mapQueue_;
     IDVector nodes_;
-    IDVector commits_;
-    int latestCommit_;
+    uint128_t commit_;
 };
 
 }

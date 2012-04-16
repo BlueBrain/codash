@@ -27,13 +27,13 @@
 
 #include <dash/Context.h>
 
-namespace co { class ObjectMap; }
-
 
 namespace codash
 {
 namespace detail
 {
+
+class ObjectMap;
 
 class Communicator : public co::Serializable
 {
@@ -47,18 +47,18 @@ public:
     dash::Context& getContext() { return context_; }
 
 protected:
-    virtual ChangeType getChangeType() const { return UNBUFFERED; }
+    virtual ChangeType getChangeType() const { return DELTA; }
 
     enum DirtyBits
     {
-        DIRTY_NODES   = co::Serializable::DIRTY_CUSTOM << 0,
-        DIRTY_COMMITS = co::Serializable::DIRTY_CUSTOM << 1
+        DIRTY_NODES  = co::Serializable::DIRTY_CUSTOM << 0,
+        DIRTY_COMMIT = co::Serializable::DIRTY_CUSTOM << 1
     };
 
     bool owner_;
     dash::Context context_;
     co::LocalNodePtr localNode_;
-    co::ObjectMap* objectMap_;
+    ObjectMap* objectMap_;
     ObjectFactory factory_;
 };
 

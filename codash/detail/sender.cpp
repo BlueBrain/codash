@@ -19,6 +19,7 @@
  */
 
 #include "sender.h"
+#include "objectMap.h"
 
 #include <co/command.h>
 #include <co/connectionDescription.h>
@@ -36,7 +37,7 @@ namespace detail
 Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
     , nodeMap_()
-    , commitMap_()
+    , commit_()
 {
     init_();
 }
@@ -44,7 +45,7 @@ Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
 Sender::Sender( co::LocalNodePtr localNode )
     : Communicator( localNode )
     , nodeMap_()
-    , commitMap_()
+    , commit_()
 {
     init_();
 }
@@ -55,7 +56,6 @@ Sender::~Sender()
     delete objectMap_;
     objectMap_ = 0;
     nodeMap_.clear();
-    commitMap_.clear();
 }
 
 void Sender::init_()
@@ -93,7 +93,7 @@ void Sender::deregisterNode( dash::NodePtr node )
 {
     // TODO: need deregister_ func in objectMap!
     //NodeDistPtr nodeDist = nodeMap_[node];
-    //impl_->objectMap->deregister_( nodeDist );
+    //objectMap_->deregister( nodeDist.get( ));
     nodeMap_.erase( node );
 
     context_.unmap( node );
@@ -102,11 +102,15 @@ void Sender::deregisterNode( dash::NodePtr node )
 uint128_t Sender::commit( const uint32_t incarnation )
 {
     CommitPtr newCommit( new dash::Commit( context_.commit( )));
-    CommitDistPtr commitDist( new CommitDist( newCommit ));
-    commitMap_[newCommit] = commitDist;
-    setDirty( DIRTY_COMMITS );
+    if( !commit_ )
+    {
+        commit_.reset( new CommitDist( newCommit ));
+        objectMap_->register_( commit_.get(), OBJECTTYPE_COMMIT );
+        setDirty( DIRTY_COMMIT );
+    }
+    else
+        commit_->setValue( newCommit );
 
-    objectMap_->register_( commitDist.get(), OBJECTTYPE_COMMIT );
     objectMap_->commit();
 
     return co::Object::commit( incarnation );
@@ -127,19 +131,17 @@ void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
             os << entry.second->getID();
         }
     }
-    if( dirtyBits & DIRTY_COMMITS )
+    if( dirtyBits & DIRTY_COMMIT )
     {
-        os << static_cast< uint64_t >( commitMap_.size( ));
-        BOOST_FOREACH( const CommitMap::value_type& entry, commitMap_ )
-        {
-            os << entry.second->getID();
-        }
+        os << (commit_ ? commit_->getID() : uint128_t::ZERO);
     }
+    Communicator::serialize( os, dirtyBits );
 }
 
 void Sender::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
 {
-    LBDONTCALL
+    LBDONTCALL;
+    Communicator::deserialize( is, dirtyBits );
 }
 
 }

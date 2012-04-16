@@ -19,6 +19,7 @@
  */
 
 #include "receiver.h"
+#include "objectMap.h"
 #include "types.h"
 
 #include <co/connectionDescription.h>
@@ -41,8 +42,7 @@ Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     , proxyNode_()
     , mapQueue_()
     , nodes_()
-    , commits_()
-    , latestCommit_()
+    , commit_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -53,8 +53,7 @@ Receiver::Receiver( co::LocalNodePtr localNode )
     , proxyNode_()
     , mapQueue_()
     , nodes_()
-    , commits_()
-    , latestCommit_()
+    , commit_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -134,8 +133,13 @@ const dash::Nodes& Receiver::getNodes() const
 
 dash::Commit Receiver::getLatestCommit_()
 {
+    if( commit_ == uint128_t::ZERO )
+        return dash::Commit();
+
     CommitDist* commitDist = static_cast< CommitDist* >
-                                ( objectMap_->get( commits_[latestCommit_] ));
+                                ( objectMap_->get( commit_ ));
+
+    commit_ = uint128_t::ZERO;
     CommitPtr newCommit = commitDist->getValue();
     return *newCommit;
 }
@@ -145,14 +149,14 @@ uint128_t Receiver::sync( const uint128_t& version )
     processMappings_();
     const uint128_t appliedVersion = co::Object::sync( version );
     objectMap_->sync();
-    if( latestCommit_ != -1 )
-        context_.apply( getLatestCommit_( ));
+    context_.apply( getLatestCommit_( ));
     return appliedVersion;
 }
 
 void Receiver::serialize( co::DataOStream& os, const uint64_t dirtyBits )
 {
     LBDONTCALL
+    Communicator::serialize( os, dirtyBits );
 }
 
 void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
@@ -179,24 +183,11 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
             nodes_.push_back( id );
         }
     }
-    if( dirtyBits & DIRTY_COMMITS )
+    if( dirtyBits & DIRTY_COMMIT )
     {
-        uint64_t size;
-        is >> size;
-        if( commits_.size() == size )
-            latestCommit_ = -1;
-        else
-            latestCommit_ = int(size) - 1;
-        commits_.clear();
-        commits_.reserve( size_t( size ));
-
-        for( uint64_t i = 0; i < size; ++i )
-        {
-            uint128_t id;
-            is >> id;
-            commits_.push_back( id );
-        }
+        is >> commit_;
     }
+    Communicator::deserialize( is, dirtyBits );
 }
 
 }
