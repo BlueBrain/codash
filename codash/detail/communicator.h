@@ -21,7 +21,7 @@
 #ifndef CODASH_DETAIL_COMMUNICATOR_H
 #define CODASH_DETAIL_COMMUNICATOR_H
 
-#include <codash/objectFactory.h>
+#include "objectFactory.h"
 
 #include <co/serializable.h>
 

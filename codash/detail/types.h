@@ -21,7 +21,7 @@
 #ifndef CODASH_DETAIL_TYPES_H
 #define CODASH_DETAIL_TYPES_H
 
-#include <codash/objectFactory.h>
+#include "objectFactory.h"
 
 
 namespace codash
