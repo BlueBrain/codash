@@ -22,7 +22,7 @@
 #include "types.h"
 
 #include <co/connectionDescription.h>
-#include <co/nodePackets.h>
+#include <co/packets.h>
 #include <co/objectMap.h>
 
 #include <boost/bind.hpp>
@@ -76,7 +76,7 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     if( !localNode_->connect( proxyNode_ ))
         return false;
 
-    co::UUIDPacket packet;
+    co::NodeCommandPacket packet;
     packet.custom = initCmd_;
     proxyNode_->send( packet );
     return true;

@@ -65,7 +65,7 @@ void Sender::init_()
 
     localNode_->registerObject( this );
     localNode_->registerObject( objectMap_ );
-    localNode_->registerCustomCommand( initCmd_,
+    localNode_->registerCommandHandler( initCmd_,
                                   boost::bind( &Sender::cmdConnect_, this, _1 ),
                                   localNode_->getCommandThreadQueue( ));
 }
