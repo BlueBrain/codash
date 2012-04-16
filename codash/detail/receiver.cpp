@@ -77,7 +77,7 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
         return false;
 
     co::NodeCommandPacket packet;
-    packet.custom = initCmd_;
+    packet.commandID = initCmd_;
     proxyNode_->send( packet );
     return true;
 }
