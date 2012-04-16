@@ -88,6 +88,13 @@ void Receiver::waitConnected()
     processMappings_();
 }
 
+bool Receiver::isConnected() const
+{
+    if( !proxyNode_ )
+        return false;
+    return proxyNode_->isConnected();
+}
+
 void Receiver::handleInit_( const uint128_t& groupID, const uint128_t& typeID,
                             const uint128_t& objectID,
                             co::DataIStream& istream )

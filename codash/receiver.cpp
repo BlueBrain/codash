@@ -50,6 +50,11 @@ void Receiver::waitConnected()
     impl_->waitConnected();
 }
 
+bool Receiver::isConnected() const
+{
+    return impl_->isConnected();
+}
+
 dash::Context& Receiver::getContext()
 {
     return impl_->getContext();

@@ -46,6 +46,8 @@ public:
 
     void waitConnected();
 
+    bool isConnected() const;
+
     const dash::Nodes& getNodes() const;
 
     virtual uint128_t sync( const uint128_t& version = co::VERSION_HEAD );

@@ -52,7 +52,7 @@ int codash::test::main( int argc, char **argv )
         dash::NodePtr newNode = receiver.getNodes()[0];
         TEST( *node == *newNode );
 
-        node->insert( new dash::Attribute( 5 ) );
+        node->insert( new dash::Attribute( 5 ));
         receiver.sync( sender.commit( ));
         TEST( receiver.getNodes().size() == 1 );
         TEST( *newNode->getAttribute( 0 ) == *node->getAttribute( 0 ));
