@@ -19,7 +19,6 @@
  */
 
 #include "receiver.h"
-#include "objectMap.h"
 #include "types.h"
 
 #include <co/connectionDescription.h>

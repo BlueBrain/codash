@@ -27,13 +27,12 @@
 
 #include <dash/Context.h>
 
+namespace co { class ObjectMap; }
 
 namespace codash
 {
 namespace detail
 {
-
-class ObjectMap;
 
 class Communicator : public co::Serializable
 {
@@ -58,7 +57,7 @@ protected:
     bool owner_;
     dash::Context context_;
     co::LocalNodePtr localNode_;
-    ObjectMap* objectMap_;
+    co::ObjectMap* objectMap_;
     ObjectFactory factory_;
 };
 

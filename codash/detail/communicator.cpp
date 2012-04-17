@@ -19,7 +19,6 @@
  */
 
 #include "communicator.h"
-#include "objectMap.h"
 
 #include <co/connectionDescription.h>
 #include <co/init.h>
@@ -46,7 +45,7 @@ Communicator::Communicator( int argc, char** argv,
         owner_ = true;
         localNode_->addConnectionDescription( conn );
         localNode_->listen();
-        objectMap_ = new ObjectMap( *localNode_, factory_ );
+        objectMap_ = new co::ObjectMap( *localNode_, factory_ );
     }
 }
 
@@ -55,7 +54,7 @@ Communicator::Communicator( co::LocalNodePtr localNode )
     , owner_( false )
     , context_()
     , localNode_( localNode )
-    , objectMap_( new ObjectMap( *localNode_, factory_ ))
+    , objectMap_( new co::ObjectMap( *localNode_, factory_ ))
     , factory_()
 {}
 

@@ -19,7 +19,6 @@
  */
 
 #include "sender.h"
-#include "objectMap.h"
 
 #include <co/command.h>
 #include <co/connectionDescription.h>

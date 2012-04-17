@@ -25,7 +25,6 @@ set(CODASH_DETAIL_SOURCES
   detail/communicator.h
   detail/communicator.cpp
   detail/objectFactory.h
-  detail/objectMap.h
   detail/receiver.h
   detail/receiver.cpp
   detail/sender.h
