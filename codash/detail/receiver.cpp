@@ -77,13 +77,9 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     co::NodeCommandPacket packet;
     packet.commandID = initCmd_;
     proxyNode_->send( packet );
-    return true;
-}
-
-void Receiver::waitConnected()
-{
     monitor.waitEQ( true );
     processMappings_();
+    return true;
 }
 
 bool Receiver::isConnected() const

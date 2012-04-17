@@ -45,11 +45,6 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     return impl_->connect( conn );
 }
 
-void Receiver::waitConnected()
-{
-    impl_->waitConnected();
-}
-
 bool Receiver::isConnected() const
 {
     return impl_->isConnected();

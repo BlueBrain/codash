@@ -69,16 +69,13 @@ public:
     CODASH_API ~Receiver();
 
     /**
-     * Connect to the given sender
+     * Connect to the given sender.
      *
      * @param conn the connection of the sender.
      * @return true if connect to sender was successful, false otherwise
      * @version 0.1
      */
     CODASH_API bool connect( co::ConnectionDescriptionPtr conn );
-
-    /** Completes the connection to the sender. @version 0.1 */
-    CODASH_API void waitConnected();
 
     /** @return true if connected to a sender. @version 0.1 */
     CODASH_API bool isConnected() const;
