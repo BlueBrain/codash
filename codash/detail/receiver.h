@@ -44,6 +44,8 @@ public:
 
     bool connect( co::ConnectionDescriptionPtr conn );
 
+    bool disconnect();
+
     bool isConnected() const;
 
     const dash::Nodes& getNodes() const;

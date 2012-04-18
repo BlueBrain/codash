@@ -60,13 +60,12 @@ Receiver::Receiver( co::LocalNodePtr localNode )
 
 Receiver::~Receiver()
 {
-    if( proxyNode_ )
-        localNode_->disconnect( proxyNode_ );
+    disconnect();
 }
 
 bool Receiver::connect( co::ConnectionDescriptionPtr conn )
 {
-    if( !conn )
+    if( !conn || isConnected( ))
         return false;
 
     proxyNode_ = new co::Node;
@@ -79,6 +78,15 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     proxyNode_->send( packet );
     monitor.waitEQ( true );
     processMappings_();
+    return true;
+}
+
+bool Receiver::disconnect()
+{
+    if( !isConnected() || !localNode_->disconnect( proxyNode_ ))
+        return false;
+
+    proxyNode_ = co::NodePtr();
     return true;
 }
 

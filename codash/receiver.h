@@ -77,6 +77,14 @@ public:
      */
     CODASH_API bool connect( co::ConnectionDescriptionPtr conn );
 
+    /**
+     * Disconnect from a connected sender.
+
+     * @return true if disconnect from sender was successful, false otherwise
+     * @version 0.1
+     */
+    CODASH_API bool disconnect();
+
     /** @return true if connected to a sender. @version 0.1 */
     CODASH_API bool isConnected() const;
 

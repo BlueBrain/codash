@@ -45,6 +45,11 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     return impl_->connect( conn );
 }
 
+bool Receiver::disconnect()
+{
+    return impl_->disconnect();
+}
+
 bool Receiver::isConnected() const
 {
     return impl_->isConnected();
