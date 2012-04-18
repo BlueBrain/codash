@@ -98,7 +98,7 @@ void Sender::deregisterNode( dash::NodePtr node )
     context_.unmap( node );
 }
 
-uint128_t Sender::commit( const uint32_t incarnation )
+void Sender::commit()
 {
     CommitPtr newCommit( new dash::Commit( context_.commit( )));
     if( !commit_ )
@@ -112,7 +112,7 @@ uint128_t Sender::commit( const uint32_t incarnation )
 
     objectMap_->commit();
 
-    return co::Object::commit( incarnation );
+    co::Object::commit();
 }
 
 void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )

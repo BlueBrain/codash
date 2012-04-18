@@ -55,9 +55,9 @@ void Sender::deregisterNode( dash::NodePtr node )
     impl_->deregisterNode( node );
 }
 
-uint128_t Sender::commit()
+void Sender::commit()
 {
-    return impl_->commit();
+    impl_->commit();
 }
 
 }

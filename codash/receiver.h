@@ -97,10 +97,15 @@ public:
     /**
      * Receive new changes from the connected sender.
      *
-     * @param version the version to synchronize
+     * It will apply the latest version on all dash::Nodes. The sync call
+     * will block until there is a new version coming from the sender or if the
+     * timeout was reached.
+     * @sa co::Global::getKeepaliveTimeout()
+     *
+     * @return true if data was received from sender, false otherwise
      * @version 0.1
      */
-    CODASH_API void sync( const uint128_t& version = co::VERSION_HEAD );
+    CODASH_API bool sync();
 
 private:
     detail::Receiver* const impl_;

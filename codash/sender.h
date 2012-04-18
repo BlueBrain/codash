@@ -95,10 +95,9 @@ public:
     /**
      * Commit all changes and propagate them to connected receivers.
      *
-     * @return the new head version.
      * @version 0.1
      */
-    CODASH_API uint128_t commit();
+    CODASH_API void commit();
 
 private:
     detail::Sender* const impl_;

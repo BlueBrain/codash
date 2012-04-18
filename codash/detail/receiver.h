@@ -50,11 +50,13 @@ public:
 
     const dash::Nodes& getNodes() const;
 
-    virtual uint128_t sync( const uint128_t& version = co::VERSION_HEAD );
+    bool sync();
 
 protected:
     virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits );
     virtual void deserialize( co::DataIStream& is, const uint64_t dirtyBits );
+
+    virtual void notifyNewHeadVersion( const uint128_t& version );
 
 private:
     void handleInit_( const uint128_t& groupID, const uint128_t& typeID,

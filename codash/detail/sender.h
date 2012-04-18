@@ -46,7 +46,7 @@ public:
 
     void deregisterNode( dash::NodePtr node );
 
-    virtual uint128_t commit( const uint32_t incarnation = CO_COMMIT_NEXT );
+    void commit();
 
 protected:
     virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits );

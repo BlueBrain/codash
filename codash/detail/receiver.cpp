@@ -22,6 +22,7 @@
 #include "types.h"
 
 #include <co/connectionDescription.h>
+#include <co/global.h>
 #include <co/packets.h>
 #include <co/objectMap.h>
 
@@ -35,6 +36,7 @@ namespace detail
 {
 
 lunchbox::Monitor<bool> monitor( false );
+lunchbox::Monitor<uint32_t> newVersion( 0 );
 
 Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
@@ -147,13 +149,19 @@ dash::Commit Receiver::getLatestCommit_()
     return *newCommit;
 }
 
-uint128_t Receiver::sync( const uint128_t& version )
+bool Receiver::sync()
 {
+    if( !newVersion.timedWaitGE( 1, co::Global::getKeepaliveTimeout( )))
+    {
+        LBWARN << "Timeout waiting for sender to send new data" << std::endl;
+        return false;
+    }
+    --newVersion;
     processMappings_();
-    const uint128_t appliedVersion = co::Object::sync( version );
+    co::Object::sync();
     objectMap_->sync();
     context_.apply( getLatestCommit_( ));
-    return appliedVersion;
+    return true;
 }
 
 void Receiver::serialize( co::DataOStream& os, const uint64_t dirtyBits )
@@ -191,6 +199,12 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
         is >> commit_;
     }
     Communicator::deserialize( is, dirtyBits );
+}
+
+void Receiver::notifyNewHeadVersion( const uint128_t& version )
+{
+    ++newVersion;
+    Communicator::notifyNewHeadVersion( version );
 }
 
 }

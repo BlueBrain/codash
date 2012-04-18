@@ -65,9 +65,9 @@ const dash::Nodes& Receiver::getNodes() const
     return impl_->getNodes();
 }
 
-void Receiver::sync( const uint128_t& version )
+bool Receiver::sync()
 {
-    impl_->sync( version );
+    return impl_->sync();
 }
 
 }
