@@ -40,6 +40,9 @@ source_group(detail FILES ${CODASH_DETAIL_ALL})
 
 set(LIBRARY codash)
 set(LIB_INCLUDE ${LIBRARY}${VERSION_MAJOR})
+if(NOT MSVC)
+  set(LIB_INCLUDE ${LIB_INCLUDE}${VERSION_MAJOR})
+endif()
 
 add_library(${LIBRARY} SHARED ${CODASH_ALL} ${CODASH_DETAIL_ALL})
 target_link_libraries(${LIBRARY} ${DASH_LIBRARIES} ${COLLAGE_LIBRARIES}
@@ -57,4 +60,6 @@ install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib
         LIBRARY DESTINATION lib COMPONENT lib)
-install_symlink(${LIB_INCLUDE} ${LIBRARY} include)
+if(NOT MSVC)
+  install_symlink("include/${LIB_INCLUDE}" "include/${LIBRARY}" dev)
+endif()
