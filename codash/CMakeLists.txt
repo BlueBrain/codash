@@ -39,7 +39,7 @@ source_group(\\ FILES CMakeLists.txt ${CODASH_ALL})
 source_group(detail FILES ${CODASH_DETAIL_ALL})
 
 set(LIBRARY codash)
-set(LIB_INCLUDE ${LIBRARY}${VERSION_MAJOR})
+set(LIB_INCLUDE ${LIBRARY})
 if(NOT MSVC)
   set(LIB_INCLUDE ${LIB_INCLUDE}${VERSION_MAJOR})
 endif()
