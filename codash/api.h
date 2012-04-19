@@ -22,7 +22,7 @@
 #define CODASH_API_H
 
 /**
- * @file codash/api.h
+ * @file api.h
  *
  * Defines shared library symbol visibility macros.
  */
