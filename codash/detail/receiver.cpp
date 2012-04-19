@@ -183,10 +183,10 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
 {
     if( dirtyBits == co::Serializable::DIRTY_ALL )
     {
-        uint128_t id;
-        is >> id;
+        co::ObjectVersion ov;
+        is >> ov;
         mapQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
-                localNode_.get(), objectMap_, id, co::VERSION_OLDEST ));
+                localNode_.get(), objectMap_, ov ));
     }
 
     if( dirtyBits & DIRTY_NODES )

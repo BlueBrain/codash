@@ -123,7 +123,7 @@ void Sender::commit()
 void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
 {
     if( dirtyBits == co::Serializable::DIRTY_ALL )
-        os << objectMap_->getID();
+        os << co::ObjectVersion( objectMap_ );
 
     if( dirtyBits & DIRTY_NODES )
     {
