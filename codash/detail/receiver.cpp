@@ -44,6 +44,7 @@ Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     , nodes_()
     , commit_()
     , queuedVersions_()
+    , objectMapVersion_( co::VERSION_FIRST )
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -56,6 +57,7 @@ Receiver::Receiver( co::LocalNodePtr localNode )
     , nodes_()
     , commit_()
     , queuedVersions_()
+    , objectMapVersion_( co::VERSION_FIRST )
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -81,6 +83,7 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     proxyNode_->send( packet );
     monitor.waitEQ( true );
     processMappings_();
+    objectMapVersion_ = objectMap_->getVersion();
     return true;
 }
 
@@ -163,8 +166,7 @@ bool Receiver::sync()
             return false;
         }
         else
-            LBWARN << "Got timeout while waiting for new data"
-                   << std::endl;
+            LBWARN << "Got timeout while waiting for new data" << std::endl;
     }
 
     Communicator::sync( version );
@@ -181,14 +183,6 @@ void Receiver::serialize( co::DataOStream& os, const uint64_t dirtyBits )
 
 void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
 {
-    if( dirtyBits == co::Serializable::DIRTY_ALL )
-    {
-        co::ObjectVersion ov;
-        is >> ov;
-        mapQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
-                localNode_.get(), objectMap_, ov ));
-    }
-
     if( dirtyBits & DIRTY_NODES )
     {
         uint64_t size;
@@ -205,8 +199,15 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
     }
     if( dirtyBits & DIRTY_COMMIT )
         is >> commit_;
-    if( dirtyBits & DIRTY_COMMIT_VERSION )
-        is >> objectMapVersion_;
+    if( dirtyBits & DIRTY_OBJECTMAP )
+    {
+        co::ObjectVersion ov;
+        is >> ov;
+        objectMapVersion_ = ov.version;
+        if( !objectMap_->isAttached( ))
+            mapQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
+                                            localNode_.get(), objectMap_, ov ));
+    }
 
     Communicator::deserialize( is, dirtyBits );
 }

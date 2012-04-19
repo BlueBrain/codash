@@ -62,8 +62,8 @@ void Sender::init_()
     if( !localNode_ )
         return;
 
-    localNode_->registerObject( this );
     localNode_->registerObject( objectMap_ );
+    localNode_->registerObject( this );
     localNode_->registerCommandHandler( initCmd_,
                                   boost::bind( &Sender::cmdConnect_, this, _1 ),
                                   localNode_->getCommandThreadQueue( ));
@@ -110,21 +110,15 @@ void Sender::commit()
     else
         commit_->setValue( newCommit );
 
-    const uint128_t& newVersion = objectMap_->commit();
-    if( objectMapVersion_ != newVersion )
-    {
-        objectMapVersion_ = newVersion;
-        setDirty( DIRTY_COMMIT_VERSION );
-    }
+    const uint128_t oldVersion = objectMap_->getVersion();
+    if( objectMap_->commit() > oldVersion )
+        setDirty( DIRTY_OBJECTMAP );
 
     Communicator::commit();
 }
 
 void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
 {
-    if( dirtyBits == co::Serializable::DIRTY_ALL )
-        os << co::ObjectVersion( objectMap_ );
-
     if( dirtyBits & DIRTY_NODES )
     {
         os << static_cast< uint64_t >( nodeMap_.size( ));
@@ -135,8 +129,8 @@ void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
     }
     if( dirtyBits & DIRTY_COMMIT )
         os << (commit_ ? commit_->getID() : uint128_t::ZERO);
-    if( dirtyBits & DIRTY_COMMIT_VERSION )
-        os << objectMapVersion_;
+    if( dirtyBits & DIRTY_OBJECTMAP )
+        os << co::ObjectVersion( objectMap_ );
 
     Communicator::serialize( os, dirtyBits );
 }

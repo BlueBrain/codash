@@ -74,6 +74,7 @@ private:
     IDVector nodes_;
     uint128_t commit_;
     lunchbox::MTQueue< uint128_t > queuedVersions_;
+    uint128_t objectMapVersion_;
 };
 
 }
