@@ -110,17 +110,20 @@ void Sender::commit()
     else
         commit_->setValue( newCommit );
 
-    objectMap_->commit();
+    const uint128_t& newVersion = objectMap_->commit();
+    if( objectMapVersion_ != newVersion )
+    {
+        objectMapVersion_ = newVersion;
+        setDirty( DIRTY_COMMIT_VERSION );
+    }
 
-    co::Object::commit();
+    Communicator::commit();
 }
 
 void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
 {
     if( dirtyBits == co::Serializable::DIRTY_ALL )
-    {
         os << objectMap_->getID();
-    }
 
     if( dirtyBits & DIRTY_NODES )
     {
@@ -131,9 +134,10 @@ void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
         }
     }
     if( dirtyBits & DIRTY_COMMIT )
-    {
         os << (commit_ ? commit_->getID() : uint128_t::ZERO);
-    }
+    if( dirtyBits & DIRTY_COMMIT_VERSION )
+        os << objectMapVersion_;
+
     Communicator::serialize( os, dirtyBits );
 }
 

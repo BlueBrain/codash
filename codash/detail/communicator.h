@@ -34,6 +34,8 @@ namespace codash
 namespace detail
 {
 
+using lunchbox::uint128_t;
+
 class Communicator : public co::Serializable
 {
 public:
@@ -50,14 +52,16 @@ protected:
 
     enum DirtyBits
     {
-        DIRTY_NODES  = co::Serializable::DIRTY_CUSTOM << 0,
-        DIRTY_COMMIT = co::Serializable::DIRTY_CUSTOM << 1
+        DIRTY_NODES          = co::Serializable::DIRTY_CUSTOM << 0,
+        DIRTY_COMMIT         = co::Serializable::DIRTY_CUSTOM << 1,
+        DIRTY_COMMIT_VERSION = co::Serializable::DIRTY_CUSTOM << 2
     };
 
     bool owner_;
     dash::Context context_;
     co::LocalNodePtr localNode_;
     co::ObjectMap* objectMap_;
+    uint128_t objectMapVersion_;
     ObjectFactory factory_;
 };
 

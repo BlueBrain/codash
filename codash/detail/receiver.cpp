@@ -36,7 +36,6 @@ namespace detail
 {
 
 lunchbox::Monitor<bool> monitor( false );
-lunchbox::Monitor<uint32_t> newVersion( 0 );
 
 Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
@@ -44,6 +43,7 @@ Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     , mapQueue_()
     , nodes_()
     , commit_()
+    , queuedVersions_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -55,6 +55,7 @@ Receiver::Receiver( co::LocalNodePtr localNode )
     , mapQueue_()
     , nodes_()
     , commit_()
+    , queuedVersions_()
 {
     localNode_->registerPushHandler( groupID_,
             boost::bind( &Receiver::handleInit_, this, _1, _2, _3, _4 ));
@@ -136,7 +137,7 @@ const dash::Nodes& Receiver::getNodes() const
     return nodes;
 }
 
-dash::Commit Receiver::getLatestCommit_()
+dash::Commit Receiver::getCommit_()
 {
     if( commit_ == uint128_t::ZERO )
         return dash::Commit();
@@ -151,16 +152,25 @@ dash::Commit Receiver::getLatestCommit_()
 
 bool Receiver::sync()
 {
-    if( !newVersion.timedWaitGE( 1, co::Global::getKeepaliveTimeout( )))
+    uint128_t version;
+    while( !queuedVersions_.timedPop( co::Global::getKeepaliveTimeout(),
+                                      version ))
     {
-        LBWARN << "Timeout waiting for sender to send new data" << std::endl;
-        return false;
+        if( !isConnected( ))
+        {
+            LBWARN << "Lost connection to sender while waiting for new data"
+                   << std::endl;
+            return false;
+        }
+        else
+            LBWARN << "Got timeout while waiting for new data"
+                   << std::endl;
     }
-    --newVersion;
+
     processMappings_();
-    co::Object::sync();
-    objectMap_->sync();
-    context_.apply( getLatestCommit_( ));
+    Communicator::sync( version );
+    objectMap_->sync( objectMapVersion_ );
+    context_.apply( getCommit_( ));
     return true;
 }
 
@@ -195,15 +205,16 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
         }
     }
     if( dirtyBits & DIRTY_COMMIT )
-    {
         is >> commit_;
-    }
+    if( dirtyBits & DIRTY_COMMIT_VERSION )
+        is >> objectMapVersion_;
+
     Communicator::deserialize( is, dirtyBits );
 }
 
 void Receiver::notifyNewHeadVersion( const uint128_t& version )
 {
-    ++newVersion;
+    queuedVersions_.push( version );
     Communicator::notifyNewHeadVersion( version );
 }
 

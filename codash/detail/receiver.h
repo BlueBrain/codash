@@ -25,13 +25,13 @@
 
 #include <boost/function/function0.hpp>
 
+#include <lunchbox/mtQueue.h>
+
 
 namespace codash
 {
 namespace detail
 {
-
-using lunchbox::uint128_t;
 
 class Receiver : public Communicator
 {
@@ -64,7 +64,7 @@ private:
 
     void processMappings_();
 
-    dash::Commit getLatestCommit_();
+    dash::Commit getCommit_();
 
     typedef boost::function< void() > WorkFunc;
     typedef std::vector< uint128_t > IDVector;
@@ -73,6 +73,7 @@ private:
     std::deque< WorkFunc > mapQueue_;
     IDVector nodes_;
     uint128_t commit_;
+    lunchbox::MTQueue< uint128_t > queuedVersions_;
 };
 
 }
