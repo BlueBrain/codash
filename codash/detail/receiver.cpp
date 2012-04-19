@@ -167,7 +167,6 @@ bool Receiver::sync()
                    << std::endl;
     }
 
-    processMappings_();
     Communicator::sync( version );
     objectMap_->sync( objectMapVersion_ );
     context_.apply( getCommit_( ));
@@ -214,7 +213,8 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
 
 void Receiver::notifyNewHeadVersion( const uint128_t& version )
 {
-    queuedVersions_.push( version );
+    if( version > co::VERSION_FIRST )
+        queuedVersions_.push( version );
     Communicator::notifyNewHeadVersion( version );
 }
 
