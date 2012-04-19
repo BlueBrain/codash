@@ -20,15 +20,15 @@
 
 #include "api.h"
 
-#include <dash/Attribute.h>
-#include <dash/Node.h>
-#include <dash/Commit.h>
+#include <dash/attribute.h>
+#include <dash/node.h>
+#include <dash/commit.h>
 
-#include <dash/detail/Attribute.h>
-#include <dash/detail/Node.h>
-#include <dash/detail/Change.h>
-#include <dash/detail/Commit.h>
-#include <dash/detail/Serializable.h>
+#include <dash/detail/attribute.h>
+#include <dash/detail/node.h>
+#include <dash/detail/change.h>
+#include <dash/detail/commit.h>
+#include <dash/detail/serializable.h>
 
 #include <co/dataOStreamArchive.h>
 #include <co/dataIStreamArchive.h>

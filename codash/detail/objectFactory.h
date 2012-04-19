@@ -25,8 +25,8 @@
 
 #include <co/objectFactory.h>
 
-#include <dash/Node.h>
-#include <dash/Commit.h>
+#include <dash/node.h>
+#include <dash/commit.h>
 
 
 namespace codash

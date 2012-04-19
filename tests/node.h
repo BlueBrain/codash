@@ -21,8 +21,8 @@
 #ifndef CODASHTEST_NODE_H
 #define CODASHTEST_NODE_H
 
-#include <dash/Node.h>
-#include <dash/Attribute.h>
+#include <dash/node.h>
+#include <dash/attribute.h>
 
 
 bool areEqual( dash::NodeConstPtr lhs, dash::NodeConstPtr rhs )

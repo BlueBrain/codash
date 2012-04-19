@@ -27,7 +27,7 @@
 #include <co/dataOStreamArchive.h>
 #include <co/dataIStreamArchive.h>
 
-#include <dash/detail/AnySerialization.h>
+#include <dash/detail/anySerialization.h>
 
 
 namespace codash

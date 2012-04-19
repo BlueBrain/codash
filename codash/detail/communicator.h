@@ -25,7 +25,7 @@
 
 #include <co/serializable.h>
 
-#include <dash/Context.h>
+#include <dash/context.h>
 
 namespace co { class ObjectMap; }
 
