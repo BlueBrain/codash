@@ -40,7 +40,7 @@ include_directories(${LUNCHBOX_INCLUDE_DIRS})
 include(InstallSymlink)
 add_subdirectory(codash)
 add_subdirectory(tests)
-#add_subdirectory(doc)
+add_subdirectory(doc)
 include(DoxygenRule)
 
 include(CTest)
