@@ -22,6 +22,7 @@
 #define CODASH_DETAIL_RECEIVER_H
 
 #include "communicator.h"
+#include "types.h"
 
 #include <boost/function/function0.hpp>
 
@@ -36,7 +37,7 @@ namespace detail
 class Receiver : public Communicator
 {
 public:
-    Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn );
+    Receiver( int argc, char** argv );
 
     Receiver( co::LocalNodePtr localNode );
 
@@ -60,7 +61,7 @@ protected:
 
 private:
     void handleInit_( const uint128_t& groupID, const uint128_t& typeID,
-                     const uint128_t& objectID, co::DataIStream& istream );
+                      const uint128_t& objectID, co::DataIStream& istream );
 
     void processMappings_();
 
@@ -75,6 +76,7 @@ private:
     uint128_t commit_;
     lunchbox::MTQueue< uint128_t > queuedVersions_;
     uint128_t objectMapVersion_;
+    lunchbox::Monitor<bool> initialized_;
 };
 
 }

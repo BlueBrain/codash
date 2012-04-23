@@ -71,39 +71,38 @@ void Sender::init_()
 
 bool Sender::cmdConnect_( co::Command& command )
 {
-    co::Nodes nodes;
-    nodes.push_back( command.getNode( ));
+    co::Nodes nodes( 1, command.getNode( ));
     push( groupID_, typeInit_, nodes );
     return true;
 }
 
-void Sender::registerNode( dash::NodePtr node )
+void Sender::registerNode( dash::NodePtr dashNode )
 {
-    dash::Context::getCurrent().map( node, context_ );
+    dash::Context::getCurrent().map( dashNode, context_ );
 
-    NodeDistPtr nodeDist( new NodeDist( node ));
-    nodeMap_[node] = nodeDist;
+    NodePtr node( new Node( dashNode ));
+    nodeMap_[ dashNode ] = node;
     setDirty( DIRTY_NODES );
 
-    objectMap_->register_( nodeDist.get(), OBJECTTYPE_NODE );
+    objectMap_->register_( node.get(), OBJECTTYPE_NODE );
 }
 
-void Sender::deregisterNode( dash::NodePtr node )
+void Sender::deregisterNode( dash::NodePtr dashNode )
 {
     // TODO: need deregister_ func in objectMap!
-    //NodeDistPtr nodeDist = nodeMap_[node];
-    //objectMap_->deregister( nodeDist.get( ));
-    nodeMap_.erase( node );
+    //NodePtr node = nodeMap_[ dashNode ];
+    //objectMap_->deregister( node.get( ));
+    nodeMap_.erase( dashNode );
 
-    context_.unmap( node );
+    context_.unmap( dashNode );
 }
 
 void Sender::commit()
 {
-    CommitPtr newCommit( new dash::Commit( context_.commit( )));
+    dash::CommitPtr newCommit( new dash::Commit( context_.commit( )));
     if( !commit_ )
     {
-        commit_.reset( new CommitDist( newCommit ));
+        commit_.reset( new Commit( newCommit ));
         objectMap_->register_( commit_.get(), OBJECTTYPE_COMMIT );
         setDirty( DIRTY_COMMIT );
     }

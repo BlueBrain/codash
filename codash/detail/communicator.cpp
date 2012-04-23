@@ -33,29 +33,31 @@ namespace detail
 Communicator::Communicator( int argc, char** argv,
                             co::ConnectionDescriptionPtr conn )
     : co::Serializable()
-    , owner_( false )
     , context_()
     , localNode_()
     , objectMap_( 0 )
     , factory_()
+    , owner_( true )
 {
-    if( conn && co::init( argc, argv ))
-    {
-        localNode_ = new co::LocalNode;
-        owner_ = true;
+    if( !co::init( argc, argv )) // exception?
+        return;
+
+    localNode_ = new co::LocalNode;
+    if( conn )
         localNode_->addConnectionDescription( conn );
-        localNode_->listen();
-        objectMap_ = new co::ObjectMap( *localNode_, factory_ );
-    }
+    if( !localNode_->listen( ))
+        return;
+
+    objectMap_ = new co::ObjectMap( *localNode_, factory_ );
 }
 
 Communicator::Communicator( co::LocalNodePtr localNode )
     : co::Serializable()
-    , owner_( false )
     , context_()
     , localNode_( localNode )
     , objectMap_( new co::ObjectMap( *localNode_, factory_ ))
     , factory_()
+    , owner_( false )
 {}
 
 Communicator::~Communicator()
@@ -72,6 +74,8 @@ Communicator::~Communicator()
     if( owner_ )
     {
         localNode_->close();
+        LBASSERT( localNode_->getRefCount() == 1 );
+        localNode_ = 0;
         co::exit();
     }
 }

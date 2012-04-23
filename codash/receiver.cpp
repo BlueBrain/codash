@@ -25,8 +25,8 @@
 namespace codash
 {
 
-Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
-    : impl_( new detail::Receiver( argc, argv, conn ))
+Receiver::Receiver( int argc, char** argv )
+    : impl_( new detail::Receiver( argc, argv ))
 {
 }
 

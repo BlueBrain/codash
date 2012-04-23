@@ -49,7 +49,7 @@ public:
     /**
      * Construct a sender with the given connection.
      *
-     * The created localnode is maintained by the sender. It will listen on the
+     * The created local node is maintained by the sender. It will listen on the
      * given connection description for incoming receivers. Additionally, the
      * underlying Collage library will be initialized.
      *

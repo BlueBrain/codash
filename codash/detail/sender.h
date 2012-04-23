@@ -56,10 +56,10 @@ private:
     void init_();
     bool cmdConnect_( co::Command& command );
 
-    typedef std::map< dash::NodePtr, NodeDistPtr > NodeMap;
+    typedef std::map< dash::NodePtr, NodePtr > NodeMap;
 
     NodeMap nodeMap_;
-    CommitDistPtr commit_;
+    CommitPtr commit_;
 };
 
 }

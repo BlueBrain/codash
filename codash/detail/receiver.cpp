@@ -35,10 +35,8 @@ namespace codash
 namespace detail
 {
 
-lunchbox::Monitor<bool> monitor( false );
-
-Receiver::Receiver( int argc, char** argv, co::ConnectionDescriptionPtr conn )
-    : Communicator( argc, argv, conn )
+Receiver::Receiver( int argc, char** argv )
+    : Communicator( argc, argv, 0 )
     , proxyNode_()
     , mapQueue_()
     , nodes_()
@@ -81,7 +79,7 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     co::NodeCommandPacket packet;
     packet.commandID = initCmd_;
     proxyNode_->send( packet );
-    monitor.waitEQ( true );
+    initialized_.waitEQ( true );
     processMappings_();
     objectMapVersion_ = objectMap_->getVersion();
     return true;
@@ -113,7 +111,7 @@ void Receiver::handleInit_( const uint128_t& groupID, const uint128_t& typeID,
     deserialize( istream, co::Serializable::DIRTY_ALL );
     mapQueue_.push_back( boost::bind( &co::LocalNode::mapObject,
                   localNode_.get(), this, objectID, co::VERSION_NONE ));
-    monitor.set( true );
+    initialized_ = true;
 }
 
 void Receiver::processMappings_()
@@ -131,10 +129,9 @@ const dash::Nodes& Receiver::getNodes() const
     nodes.clear();
     BOOST_FOREACH( const uint128_t id, nodes_ )
     {
-        NodeDist* nodeDist = static_cast< NodeDist* >
-                                ( objectMap_->get( id ));
-        dash::NodePtr node = nodeDist->getValue();
-        nodes.push_back( node );
+        Node* node = static_cast< Node* >( objectMap_->get( id ));
+        dash::NodePtr dashNode = node->getValue();
+        nodes.push_back( dashNode );
     }
 
     return nodes;
@@ -145,11 +142,10 @@ dash::Commit Receiver::getCommit_()
     if( commit_ == uint128_t::ZERO )
         return dash::Commit();
 
-    CommitDist* commitDist = static_cast< CommitDist* >
-                                ( objectMap_->get( commit_ ));
-
+    Commit* cmt = static_cast< Commit* >( objectMap_->get( commit_ ));
     commit_ = uint128_t::ZERO;
-    CommitPtr newCommit = commitDist->getValue();
+
+    dash::CommitPtr newCommit = cmt->getValue();
     return *newCommit;
 }
 

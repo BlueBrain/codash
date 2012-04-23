@@ -34,8 +34,6 @@ namespace codash
 namespace detail
 {
 
-using lunchbox::uint128_t;
-
 class Communicator : public co::Serializable
 {
 public:
@@ -57,11 +55,11 @@ protected:
         DIRTY_OBJECTMAP = co::Serializable::DIRTY_CUSTOM << 2
     };
 
-    bool owner_;
     dash::Context context_;
     co::LocalNodePtr localNode_;
     co::ObjectMap* objectMap_;
     ObjectFactory factory_;
+    const bool owner_;
 };
 
 }

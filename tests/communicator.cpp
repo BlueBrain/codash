@@ -35,12 +35,8 @@ int codash::test::main( int argc, char **argv )
         sendDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
         sendDesc->setHostname( "localhost" );
 
-        co::ConnectionDescriptionPtr recvDesc = new co::ConnectionDescription;
-        recvDesc->type = co::CONNECTIONTYPE_TCPIP;
-        recvDesc->setHostname( "localhost" );
-
         codash::Sender sender( argc, argv, sendDesc );
-        codash::Receiver receiver( argc, argv, recvDesc );
+        codash::Receiver receiver( argc, argv );
 
         TEST( receiver.connect( sendDesc ));
 

@@ -40,10 +40,8 @@ enum ObjectType
     OBJECTTYPE_COMMIT
 };
 
-typedef Distributable< dash::Node > NodeDist;
-typedef Distributable< dash::Commit,
-                       boost::shared_ptr< dash::Commit > > CommitDist;
-
+typedef Distributable< dash::Node > Node;
+typedef Distributable< dash::Commit, boost::shared_ptr< dash::Commit > > Commit;
 
 class ObjectFactory : public co::ObjectFactory
 {
@@ -53,9 +51,9 @@ public:
         switch( type )
         {
         case OBJECTTYPE_NODE:
-            return new NodeDist;
+            return new Node;
         case OBJECTTYPE_COMMIT:
-            return new CommitDist;
+            return new Commit;
         default:
             return 0;
         }
