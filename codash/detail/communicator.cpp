@@ -37,7 +37,6 @@ Communicator::Communicator( int argc, char** argv,
     , context_()
     , localNode_()
     , objectMap_( 0 )
-    , objectMapVersion_( co::VERSION_FIRST )
     , factory_()
 {
     if( conn && co::init( argc, argv ))
@@ -56,7 +55,6 @@ Communicator::Communicator( co::LocalNodePtr localNode )
     , context_()
     , localNode_( localNode )
     , objectMap_( new co::ObjectMap( *localNode_, factory_ ))
-    , objectMapVersion_( co::VERSION_FIRST )
     , factory_()
 {}
 
