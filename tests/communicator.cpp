@@ -52,6 +52,7 @@ int codash::test::main( int argc, char **argv )
         sender.commit();
         receiver.sync();
         TEST( receiver.getNodes().size() == 1 );
+        TEST( newNode->getNAttributes() == 1 );
         TEST( *newNode->getAttribute( 0 ) == *node->getAttribute( 0 ));
 
         *node->getAttribute( 0 ) = 42;
