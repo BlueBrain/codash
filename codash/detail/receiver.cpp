@@ -40,7 +40,6 @@ Receiver::Receiver( int argc, char** argv )
     , proxyNode_()
     , mapQueue_()
     , nodes_()
-    , commit_()
     , queuedVersions_()
     , objectMapVersion_( co::VERSION_FIRST )
 {
@@ -53,7 +52,6 @@ Receiver::Receiver( co::LocalNodePtr localNode )
     , proxyNode_()
     , mapQueue_()
     , nodes_()
-    , commit_()
     , queuedVersions_()
     , objectMapVersion_( co::VERSION_FIRST )
 {
@@ -137,18 +135,6 @@ const dash::Nodes& Receiver::getNodes() const
     return nodes;
 }
 
-dash::Commit Receiver::getCommit_()
-{
-    if( commit_ == uint128_t::ZERO )
-        return dash::Commit();
-
-    Commit* cmt = static_cast< Commit* >( objectMap_->get( commit_ ));
-    commit_ = uint128_t::ZERO;
-
-    dash::CommitPtr newCommit = cmt->getValue();
-    return *newCommit;
-}
-
 bool Receiver::sync()
 {
     uint128_t version;
@@ -167,7 +153,7 @@ bool Receiver::sync()
 
     Communicator::sync( version );
     objectMap_->sync( objectMapVersion_ );
-    context_.apply( getCommit_( ));
+
     return true;
 }
 
@@ -193,8 +179,6 @@ void Receiver::deserialize( co::DataIStream& is, const uint64_t dirtyBits )
             nodes_.push_back( id );
         }
     }
-    if( dirtyBits & DIRTY_COMMIT )
-        is >> commit_;
     if( dirtyBits & DIRTY_OBJECTMAP )
     {
         co::ObjectVersion ov;

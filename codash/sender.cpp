@@ -55,9 +55,9 @@ void Sender::deregisterNode( dash::NodePtr node )
     impl_->deregisterNode( node );
 }
 
-void Sender::commit()
+void Sender::send( const dash::Commit& cmt )
 {
-    impl_->commit();
+    impl_->send( cmt );
 }
 
 }

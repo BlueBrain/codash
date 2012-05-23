@@ -37,14 +37,8 @@ static uint128_t typeInit_( make_uint128( "codash::detail::typeInit_" ));
 static uint128_t initCmd_( make_uint128( "codash::detail::initCmd_" ));
 
 typedef boost::shared_ptr< Node > NodePtr;
-typedef boost::shared_ptr< Commit > CommitPtr;
 
 }
-}
-
-namespace dash
-{
-    typedef boost::shared_ptr< Commit > CommitPtr;
 }
 
 #endif

@@ -42,21 +42,21 @@ int codash::test::main( int argc, char **argv )
 
         dash::NodePtr node = new dash::Node;
         sender.registerNode( node );
-        sender.commit();
+        sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( receiver.getNodes().size() == 1 );
         dash::NodePtr newNode = receiver.getNodes()[0];
         TEST( *node == *newNode );
 
         node->insert( new dash::Attribute( 5 ));
-        sender.commit();
+        sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( receiver.getNodes().size() == 1 );
         TEST( newNode->getNAttributes() == 1 );
         TEST( *newNode->getAttribute( 0 ) == *node->getAttribute( 0 ));
 
-        *node->getAttribute( 0 ) = 42;
-        sender.commit();
+        node->getAttribute( 0 )->set( 42 );
+        sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( newNode->getAttribute( 0 )->get<int>() == 42 );
     }

@@ -93,11 +93,13 @@ public:
     CODASH_API void deregisterNode( dash::NodePtr node );
 
     /**
-     * Commit all changes and propagate them to connected receivers.
+     * Apply provided changes and propagate them to connected receivers.
+     *
+     * @param cmt the dash commit containing the changes to apply & send
      *
      * @version 0.1
      */
-    CODASH_API void commit();
+    CODASH_API void send( const dash::Commit& cmt );
 
 private:
     detail::Sender* const impl_;

@@ -46,7 +46,7 @@ public:
 
     void deregisterNode( dash::NodePtr node );
 
-    void commit();
+    void send( const dash::Commit& cmt );
 
 protected:
     virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits );
@@ -59,7 +59,6 @@ private:
     typedef std::map< dash::NodePtr, NodePtr > NodeMap;
 
     NodeMap nodeMap_;
-    CommitPtr commit_;
 };
 
 }

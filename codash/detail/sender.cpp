@@ -36,7 +36,6 @@ namespace detail
 Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
     : Communicator( argc, argv, conn )
     , nodeMap_()
-    , commit_()
 {
     init_();
 }
@@ -44,7 +43,6 @@ Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
 Sender::Sender( co::LocalNodePtr localNode )
     : Communicator( localNode )
     , nodeMap_()
-    , commit_()
 {
     init_();
 }
@@ -72,13 +70,20 @@ void Sender::init_()
 bool Sender::cmdConnect_( co::Command& command )
 {
     co::Nodes nodes( 1, command.getNode( ));
+
+    lunchbox::ScopedFastRead mutex( context_ );
+
+    context_->setCurrent();
     push( groupID_, typeInit_, nodes );
+
     return true;
 }
 
 void Sender::registerNode( dash::NodePtr dashNode )
 {
-    dash::Context::getCurrent().map( dashNode, context_ );
+    lunchbox::ScopedFastWrite mutex( context_ );
+
+    dash::Context::getCurrent().map( dashNode, *context_ );
 
     NodePtr node( new Node( dashNode ));
     nodeMap_[ dashNode ] = node;
@@ -89,29 +94,30 @@ void Sender::registerNode( dash::NodePtr dashNode )
 
 void Sender::deregisterNode( dash::NodePtr dashNode )
 {
+    lunchbox::ScopedFastWrite mutex( context_ );
+
     // TODO: need deregister_ func in objectMap!
     //NodePtr node = nodeMap_[ dashNode ];
     //objectMap_->deregister( node.get( ));
     nodeMap_.erase( dashNode );
 
-    context_.unmap( dashNode );
+    context_->unmap( dashNode );
 }
 
-void Sender::commit()
+void Sender::send( const dash::Commit& cmt )
 {
-    dash::CommitPtr newCommit( new dash::Commit( context_.commit( )));
-    if( !commit_ )
-    {
-        commit_.reset( new Commit( newCommit ));
-        objectMap_->register_( commit_.get(), OBJECTTYPE_COMMIT );
-        setDirty( DIRTY_COMMIT );
-    }
-    else
-        commit_->setValue( newCommit );
+    lunchbox::ScopedFastWrite mutex( context_ );
+
+    dash::Context& appCtx = context_->setCurrent();
+
+    context_->apply( cmt );
+    context_->commit();
 
     const uint128_t oldVersion = objectMap_->getVersion();
     if( objectMap_->commit() > oldVersion )
         setDirty( DIRTY_OBJECTMAP );
+
+    appCtx.setCurrent();
 
     Communicator::commit();
 }
@@ -126,8 +132,6 @@ void Sender::serialize( co::DataOStream& os, const uint64_t dirtyBits )
             os << entry.second->getID();
         }
     }
-    if( dirtyBits & DIRTY_COMMIT )
-        os << (commit_ ? commit_->getID() : uint128_t::ZERO);
     if( dirtyBits & DIRTY_OBJECTMAP )
         os << co::ObjectVersion( objectMap_ );
 

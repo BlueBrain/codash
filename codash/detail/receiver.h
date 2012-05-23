@@ -65,15 +65,12 @@ private:
 
     void processMappings_();
 
-    dash::Commit getCommit_();
-
     typedef boost::function< void() > WorkFunc;
     typedef std::vector< uint128_t > IDVector;
 
     co::NodePtr proxyNode_;
     std::deque< WorkFunc > mapQueue_;
     IDVector nodes_;
-    uint128_t commit_;
     lunchbox::MTQueue< uint128_t > queuedVersions_;
     uint128_t objectMapVersion_;
     lunchbox::Monitor<bool> initialized_;

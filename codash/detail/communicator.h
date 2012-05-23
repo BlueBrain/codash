@@ -34,6 +34,8 @@ namespace codash
 namespace detail
 {
 
+typedef lunchbox::Lockable< dash::Context, lunchbox::SpinLock > Context;
+
 class Communicator : public co::Serializable
 {
 public:
@@ -43,7 +45,7 @@ public:
 
     virtual ~Communicator() = 0;
 
-    dash::Context& getContext() { return context_; }
+    dash::Context& getContext() { return *context_; }
 
 protected:
     virtual ChangeType getChangeType() const { return DELTA; }
@@ -51,11 +53,10 @@ protected:
     enum DirtyBits
     {
         DIRTY_NODES     = co::Serializable::DIRTY_CUSTOM << 0,
-        DIRTY_COMMIT    = co::Serializable::DIRTY_CUSTOM << 1,
-        DIRTY_OBJECTMAP = co::Serializable::DIRTY_CUSTOM << 2
+        DIRTY_OBJECTMAP = co::Serializable::DIRTY_CUSTOM << 1
     };
 
-    dash::Context context_;
+    Context context_;
     co::LocalNodePtr localNode_;
     co::ObjectMap* objectMap_;
     ObjectFactory factory_;

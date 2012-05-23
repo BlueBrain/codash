@@ -26,7 +26,6 @@
 #include <co/objectFactory.h>
 
 #include <dash/node.h>
-#include <dash/commit.h>
 
 
 namespace codash
@@ -36,12 +35,10 @@ namespace detail
 
 enum ObjectType
 {
-    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM,
-    OBJECTTYPE_COMMIT
+    OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM
 };
 
 typedef Distributable< dash::Node > Node;
-typedef Distributable< dash::Commit, boost::shared_ptr< dash::Commit > > Commit;
 
 class ObjectFactory : public co::ObjectFactory
 {
@@ -52,8 +49,6 @@ public:
         {
         case OBJECTTYPE_NODE:
             return new Node;
-        case OBJECTTYPE_COMMIT:
-            return new Commit;
         default:
             return 0;
         }
