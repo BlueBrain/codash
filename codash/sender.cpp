@@ -40,6 +40,16 @@ Sender::~Sender()
     delete impl_;
 }
 
+const co::LocalNodePtr Sender::getNode() const
+{
+    return impl_->getNode();
+}
+
+co::Zeroconf Sender::getZeroconf()
+{
+    return impl_->getZeroconf();
+}
+
 dash::Context& Sender::getContext()
 {
     return impl_->getContext();

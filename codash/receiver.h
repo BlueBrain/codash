@@ -26,7 +26,6 @@
 #include <dash/types.h>
 
 #include <co/connectionDescription.h>
-#include <co/objectVersion.h>
 
 
 namespace codash
@@ -66,6 +65,12 @@ public:
     /** Destruct this receiver. @version 0.1 */
     CODASH_API ~Receiver();
 
+    /** @return the used local node. @version 0.1 */
+    CODASH_API const co::LocalNodePtr getNode() const;
+
+    /** @return a Zeroconf communicator handle for this node. @version 0.1 */
+    CODASH_API co::Zeroconf getZeroconf();
+
     /**
      * Connect to the given sender.
      *
@@ -74,6 +79,15 @@ public:
      * @version 0.1
      */
     CODASH_API bool connect( co::ConnectionDescriptionPtr conn );
+
+    /**
+     * Connect to the given sender.
+     *
+     * @param nodeID the ID of the localNode of the sender.
+     * @return true if connect to sender was successful, false otherwise
+     * @version 0.1
+     */
+    CODASH_API bool connect( const co::NodeID& nodeID );
 
     /**
      * Disconnect from a connected sender.

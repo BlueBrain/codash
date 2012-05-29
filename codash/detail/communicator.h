@@ -24,6 +24,7 @@
 #include "objectFactory.h"
 
 #include <co/serializable.h>
+#include <co/zeroconf.h>
 
 #include <dash/context.h>
 
@@ -44,6 +45,10 @@ public:
     Communicator( co::LocalNodePtr localNode );
 
     virtual ~Communicator() = 0;
+
+    const co::LocalNodePtr getNode() const { return localNode_; }
+
+    co::Zeroconf getZeroconf() { return localNode_->getZeroconf(); }
 
     dash::Context& getContext() { return *context_; }
 

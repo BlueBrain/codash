@@ -74,12 +74,20 @@ bool Receiver::connect( co::ConnectionDescriptionPtr conn )
     if( !localNode_->connect( proxyNode_ ))
         return false;
 
-    co::NodeCommandPacket packet;
-    packet.commandID = initCmd_;
-    proxyNode_->send( packet );
-    initialized_.waitEQ( true );
-    processMappings_();
-    objectMapVersion_ = objectMap_->getVersion();
+    connect_();
+    return true;
+}
+
+bool Receiver::connect( const co::NodeID& nodeID )
+{
+    if( isConnected( ))
+        return false;
+
+    proxyNode_ = localNode_->connect( nodeID );
+    if( !proxyNode_ )
+        return false;
+
+    connect_();
     return true;
 }
 
@@ -97,6 +105,16 @@ bool Receiver::isConnected() const
     if( !proxyNode_ )
         return false;
     return proxyNode_->isConnected();
+}
+
+void Receiver::connect_()
+{
+    co::NodeCommandPacket packet;
+    packet.commandID = initCmd_;
+    proxyNode_->send( packet );
+    initialized_.waitEQ( true );
+    processMappings_();
+    objectMapVersion_ = objectMap_->getVersion();
 }
 
 void Receiver::handleInit_( const uint128_t& groupID, const uint128_t& typeID,

@@ -40,9 +40,24 @@ Receiver::~Receiver()
     delete impl_;
 }
 
+const co::LocalNodePtr Receiver::getNode() const
+{
+    return impl_->getNode();
+}
+
+co::Zeroconf Receiver::getZeroconf()
+{
+    return impl_->getZeroconf();
+}
+
 bool Receiver::connect( co::ConnectionDescriptionPtr conn )
 {
     return impl_->connect( conn );
+}
+
+bool Receiver::connect( const co::NodeID& nodeID )
+{
+    return impl_->connect( nodeID );
 }
 
 bool Receiver::disconnect()

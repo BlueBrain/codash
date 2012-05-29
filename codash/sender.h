@@ -27,6 +27,8 @@
 
 #include <co/connectionDescription.h>
 
+namespace co { class Zeroconf; }
+
 
 namespace codash
 {
@@ -66,6 +68,12 @@ public:
 
     /** Destruct this sender. @version 0.1 */
     CODASH_API ~Sender();
+
+    /** @return the used local node. @version 0.1 */
+    CODASH_API const co::LocalNodePtr getNode() const;
+
+    /** @return a Zeroconf communicator handle for this node. @version 0.1 */
+    CODASH_API co::Zeroconf getZeroconf();
 
     /** @return the dash::Context of this sender. @version 0.1 */
     CODASH_API dash::Context& getContext();

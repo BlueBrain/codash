@@ -45,6 +45,8 @@ public:
 
     bool connect( co::ConnectionDescriptionPtr conn );
 
+    bool connect( const co::NodeID& nodeID );
+
     bool disconnect();
 
     bool isConnected() const;
@@ -60,6 +62,7 @@ protected:
     virtual void notifyNewHeadVersion( const uint128_t& version );
 
 private:
+    void connect_();
     void handleInit_( const uint128_t& groupID, const uint128_t& typeID,
                       const uint128_t& objectID, co::DataIStream& istream );
 
