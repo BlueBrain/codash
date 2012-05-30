@@ -51,6 +51,8 @@ public:
 
     bool isConnected() const;
 
+    co::ConnectionDescriptionPtr getConnection() const;
+
     const dash::Nodes& getNodes() const;
 
     bool sync();
@@ -60,6 +62,7 @@ protected:
     virtual void deserialize( co::DataIStream& is, const uint64_t dirtyBits );
 
     virtual void notifyNewHeadVersion( const uint128_t& version );
+    virtual uint64_t getMaxVersions() const;
 
 private:
     void connect_();

@@ -107,6 +107,12 @@ bool Receiver::isConnected() const
     return proxyNode_->isConnected();
 }
 
+co::ConnectionDescriptionPtr Receiver::getConnection() const
+{
+    return proxyNode_ ? proxyNode_->getConnection()->getDescription() :
+                        co::ConnectionDescriptionPtr();
+}
+
 void Receiver::connect_()
 {
     co::NodeCommandPacket packet;
@@ -215,6 +221,11 @@ void Receiver::notifyNewHeadVersion( const uint128_t& version )
     if( version > co::VERSION_FIRST )
         queuedVersions_.push( version );
     Communicator::notifyNewHeadVersion( version );
+}
+
+uint64_t Receiver::getMaxVersions() const
+{
+    return 50;
 }
 
 }

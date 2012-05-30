@@ -70,6 +70,11 @@ bool Receiver::isConnected() const
     return impl_->isConnected();
 }
 
+co::ConnectionDescriptionPtr Receiver::getConnection() const
+{
+    return impl_->getConnection();
+}
+
 dash::Context& Receiver::getContext()
 {
     return impl_->getContext();
