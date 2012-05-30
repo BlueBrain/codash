@@ -40,7 +40,7 @@ Sender::~Sender()
     delete impl_;
 }
 
-const co::LocalNodePtr Sender::getNode() const
+co::ConstLocalNodePtr Sender::getNode() const
 {
     return impl_->getNode();
 }

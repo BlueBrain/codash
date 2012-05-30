@@ -46,7 +46,7 @@ public:
 
     virtual ~Communicator() = 0;
 
-    const co::LocalNodePtr getNode() const { return localNode_; }
+    co::ConstLocalNodePtr getNode() const { return localNode_; }
 
     co::Zeroconf getZeroconf() { return localNode_->getZeroconf(); }
 

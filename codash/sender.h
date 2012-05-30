@@ -70,7 +70,7 @@ public:
     CODASH_API ~Sender();
 
     /** @return the used local node. @version 0.1 */
-    CODASH_API const co::LocalNodePtr getNode() const;
+    CODASH_API co::ConstLocalNodePtr getNode() const;
 
     /** @return a Zeroconf communicator handle for this node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();

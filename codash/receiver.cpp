@@ -40,7 +40,7 @@ Receiver::~Receiver()
     delete impl_;
 }
 
-const co::LocalNodePtr Receiver::getNode() const
+co::ConstLocalNodePtr Receiver::getNode() const
 {
     return impl_->getNode();
 }
