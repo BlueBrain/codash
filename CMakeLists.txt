@@ -33,7 +33,7 @@ find_package(Collage 0.5.0 REQUIRED)
 link_directories(${COLLAGE_LIBRARY_DIRS})
 include_directories(${COLLAGE_INCLUDE_DIRS})
 
-find_package(Lunchbox 0.9.0 REQUIRED)
+find_package(Lunchbox 1.3.5 REQUIRED)
 link_directories(${LUNCHBOX_LIBRARY_DIRS})
 include_directories(${LUNCHBOX_INCLUDE_DIRS})
 
