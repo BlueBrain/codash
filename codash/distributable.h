@@ -26,6 +26,7 @@
 #include <co/dataIStream.h>
 #include <co/dataOStreamArchive.h>
 #include <co/dataIStreamArchive.h>
+#include <co/plugins/compressorTypes.h>
 
 #include <dash/detail/anySerialization.h>
 
@@ -68,6 +69,8 @@ protected:
     }
 
     virtual ChangeType getChangeType() const { return UNBUFFERED; }
+
+    virtual uint32_t chooseCompressor() const { return EQ_COMPRESSOR_NONE; }
 
 private:
     ValuePtr value_;
