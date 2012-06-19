@@ -29,7 +29,7 @@ find_package(DASH 0.1.0 REQUIRED)
 link_directories(${DASH_LIBRARY_DIRS})
 include_directories(${DASH_INCLUDE_DIRS})
 
-find_package(Collage 0.5.0 REQUIRED)
+find_package(Collage 0.5.5 REQUIRED)
 link_directories(${COLLAGE_LIBRARY_DIRS})
 include_directories(${COLLAGE_INCLUDE_DIRS})
 
