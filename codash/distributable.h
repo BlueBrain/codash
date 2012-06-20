@@ -40,32 +40,32 @@ class Distributable : public co::Object
 {
 public:
     Distributable()
-        : value_( new T )
+        : _value( new T )
     {}
 
     Distributable( ValuePtr value )
-        : value_( value )
+        : _value( value )
     {}
 
     ValuePtr getValue() const
     {
-        return value_;
+        return _value;
     }
 
     void setValue( ValuePtr newValue )
     {
-        value_ = newValue;
+        _value = newValue;
     }
 
 protected:
     virtual void getInstanceData( co::DataOStream& os )
     {
-        dash::detail::serializeAny< co::DataOStreamArchive >( *value_, os );
+        dash::detail::serializeAny< co::DataOStreamArchive >( *_value, os );
     }
 
     virtual void applyInstanceData( co::DataIStream& is )
     {
-        dash::detail::serializeAny< co::DataIStreamArchive >( *value_, is );
+        dash::detail::serializeAny< co::DataIStreamArchive >( *_value, is );
     }
 
     virtual ChangeType getChangeType() const { return UNBUFFERED; }
@@ -73,7 +73,7 @@ protected:
     virtual uint32_t chooseCompressor() const { return EQ_COMPRESSOR_NONE; }
 
 private:
-    ValuePtr value_;
+    ValuePtr _value;
 };
 
 }

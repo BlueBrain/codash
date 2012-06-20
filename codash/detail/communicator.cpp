@@ -33,49 +33,49 @@ namespace detail
 Communicator::Communicator( int argc, char** argv,
                             co::ConnectionDescriptionPtr conn )
     : co::Serializable()
-    , context_()
-    , localNode_()
-    , objectMap_( 0 )
-    , factory_()
-    , owner_( true )
+    , _context()
+    , _localNode()
+    , _objectMap( 0 )
+    , _factory()
+    , _owner( true )
 {
     if( !co::init( argc, argv )) // exception?
         return;
 
-    localNode_ = new co::LocalNode;
+    _localNode = new co::LocalNode;
     if( conn )
-        localNode_->addConnectionDescription( conn );
-    if( !localNode_->listen( ))
+        _localNode->addConnectionDescription( conn );
+    if( !_localNode->listen( ))
         return;
 
-    objectMap_ = new co::ObjectMap( *localNode_, factory_ );
+    _objectMap = new co::ObjectMap( *_localNode, _factory );
 }
 
 Communicator::Communicator( co::LocalNodePtr localNode )
     : co::Serializable()
-    , context_()
-    , localNode_( localNode )
-    , objectMap_( new co::ObjectMap( *localNode_, factory_ ))
-    , factory_()
-    , owner_( false )
+    , _context()
+    , _localNode( localNode )
+    , _objectMap( new co::ObjectMap( *_localNode, _factory ))
+    , _factory()
+    , _owner( false )
 {}
 
 Communicator::~Communicator()
 {
-    if( localNode_ )
+    if( _localNode )
     {
-        if( objectMap_ )
-            localNode_->releaseObject( objectMap_ );
-        localNode_->releaseObject( this );
+        if( _objectMap )
+            _localNode->releaseObject( _objectMap );
+        _localNode->releaseObject( this );
     }
 
-    delete objectMap_;
+    delete _objectMap;
 
-    if( owner_ )
+    if( _owner )
     {
-        localNode_->close();
-        LBASSERT( localNode_->getRefCount() == 1 );
-        localNode_ = 0;
+        _localNode->close();
+        LBASSERT( _localNode->getRefCount() == 1 );
+        _localNode = 0;
         co::exit();
     }
 }

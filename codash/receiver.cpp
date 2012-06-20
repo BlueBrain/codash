@@ -19,75 +19,297 @@
  */
 
 #include "receiver.h"
-#include "detail/receiver.h"
+#include "detail/communicator.h"
+#include "detail/types.h"
+
+#include <co/connectionDescription.h>
+#include <co/global.h>
+#include <co/packets.h>
+#include <co/objectMap.h>
+
+#include <lunchbox/mtQueue.h>
+
+#include <boost/bind.hpp>
+#include <boost/foreach.hpp>
+#include <boost/function/function0.hpp>
 
 
 namespace codash
 {
+namespace detail
+{
+
+typedef boost::function< void() > WorkFunc;
+typedef std::vector< uint128_t > IDVector;
+
+class Receiver : public Communicator
+{
+public:
+    Receiver( int argc, char** argv )
+        : Communicator( argc, argv, 0 )
+        , _proxyNode()
+        , _mapQueue()
+        , _nodes()
+        , _queuedVersions()
+        , _objectMapVersion( co::VERSION_FIRST )
+    {
+        _localNode->registerPushHandler( _groupID,
+                   boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
+    }
+
+    Receiver( co::LocalNodePtr localNode )
+        : Communicator( localNode )
+        , _proxyNode()
+        , _mapQueue()
+        , _nodes()
+        , _queuedVersions()
+        , _objectMapVersion( co::VERSION_FIRST )
+    {
+        _localNode->registerPushHandler( _groupID,
+                   boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
+    }
+
+    ~Receiver()
+    {
+        disconnect();
+    }
+
+    bool connect( co::ConnectionDescriptionPtr conn )
+    {
+        if( !conn || isConnected( ))
+            return false;
+
+        _proxyNode = new co::Node;
+        _proxyNode->addConnectionDescription( conn );
+        if( !_localNode->connect( _proxyNode ))
+            return false;
+
+        _connect();
+        return true;
+    }
+
+    bool connect( const co::NodeID& nodeID )
+    {
+        if( isConnected( ))
+            return false;
+
+        _proxyNode = _localNode->connect( nodeID );
+        if( !_proxyNode )
+            return false;
+
+        _connect();
+        return true;
+    }
+
+    bool disconnect()
+    {
+        if( !isConnected() || !_localNode->disconnect( _proxyNode ))
+            return false;
+
+        _proxyNode = co::NodePtr();
+        return true;
+    }
+
+    bool isConnected() const
+    {
+        if( !_proxyNode )
+            return false;
+        return _proxyNode->isConnected();
+    }
+
+    co::ConnectionDescriptionPtr getConnection() const
+    {
+        return _proxyNode ? _proxyNode->getConnection()->getDescription() :
+                            co::ConnectionDescriptionPtr();
+    }
+
+    const dash::Nodes& getNodes() const
+    {
+        static dash::Nodes nodes;
+        nodes.clear();
+        BOOST_FOREACH( const uint128_t id, _nodes )
+        {
+            Node* node = static_cast< Node* >( _objectMap->get( id ));
+            dash::NodePtr dashNode = node->getValue();
+            nodes.push_back( dashNode );
+        }
+
+        return nodes;
+    }
+
+    virtual bool sync()
+    {
+        uint128_t version;
+        while( !_queuedVersions.timedPop( co::Global::getKeepaliveTimeout(),
+                                          version ))
+        {
+            if( !isConnected( ))
+            {
+                LBWARN << "Lost connection to sender while waiting for new data"
+                       << std::endl;
+                return false;
+            }
+            else
+                LBWARN << "Got timeout while waiting for new data" << std::endl;
+        }
+
+        Communicator::sync( version );
+        _objectMap->sync( _objectMapVersion );
+
+        return true;
+    }
+
+    virtual void serialize( co::DataOStream& os, const uint64_t dirtyBits )
+    {
+        LBDONTCALL
+        Communicator::serialize( os, dirtyBits );
+    }
+
+    virtual void deserialize( co::DataIStream& is, const uint64_t dirtyBits )
+    {
+        if( dirtyBits & DIRTY_NODES )
+        {
+            uint64_t size;
+            is >> size;
+            _nodes.clear();
+            _nodes.reserve( size_t( size ));
+
+            for( uint64_t i = 0; i < size; ++i )
+            {
+                uint128_t id;
+                is >> id;
+                _nodes.push_back( id );
+            }
+        }
+        if( dirtyBits & DIRTY_OBJECTMAP )
+        {
+            co::ObjectVersion ov;
+            is >> ov;
+            _objectMapVersion = ov.version;
+            if( !_objectMap->isAttached( ))
+                _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+                                            _localNode.get(), _objectMap, ov ));
+        }
+
+        Communicator::deserialize( is, dirtyBits );
+    }
+
+    virtual void notifyNewHeadVersion( const uint128_t& version )
+    {
+        if( version > co::VERSION_FIRST )
+            _queuedVersions.push( version );
+        Communicator::notifyNewHeadVersion( version );
+    }
+
+    virtual uint64_t getMaxVersions() const
+    {
+        return 50;
+    }
+
+private:
+    void _connect()
+    {
+        co::NodeCommandPacket packet;
+        packet.commandID = _initCmd;
+        _proxyNode->send( packet );
+        _initialized.waitEQ( true );
+        _processMappings();
+        _objectMapVersion = _objectMap->getVersion();
+    }
+
+    void _handleInit( const uint128_t& groupID, const uint128_t& typeID,
+                      const uint128_t& objectID, co::DataIStream& istream )
+    {
+        LBASSERT( groupID == _groupID );
+        LBASSERT( typeID == _typeInit );
+
+        deserialize( istream, co::Serializable::DIRTY_ALL );
+        _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+                      _localNode.get(), this, objectID, co::VERSION_NONE ));
+        _initialized = true;
+    }
+
+    void _processMappings()
+    {
+        BOOST_FOREACH( const WorkFunc& func, _mapQueue )
+        {
+            func();
+        }
+        _mapQueue.clear();
+    }
+
+    co::NodePtr _proxyNode;
+    std::deque< WorkFunc > _mapQueue;
+    IDVector _nodes;
+    lunchbox::MTQueue< uint128_t > _queuedVersions;
+    uint128_t _objectMapVersion;
+    lunchbox::Monitor<bool> _initialized;
+};
+}
 
 Receiver::Receiver( int argc, char** argv )
-    : impl_( new detail::Receiver( argc, argv ))
+    : _impl( new detail::Receiver( argc, argv ))
 {
 }
 
 Receiver::Receiver( co::LocalNodePtr localNode )
-    : impl_( new detail::Receiver( localNode ))
+    : _impl( new detail::Receiver( localNode ))
 {
 }
 
 Receiver::~Receiver()
 {
-    delete impl_;
+    delete _impl;
 }
 
 co::ConstLocalNodePtr Receiver::getNode() const
 {
-    return impl_->getNode();
+    return _impl->getNode();
 }
 
 co::Zeroconf Receiver::getZeroconf()
 {
-    return impl_->getZeroconf();
+    return _impl->getZeroconf();
 }
 
 bool Receiver::connect( co::ConnectionDescriptionPtr conn )
 {
-    return impl_->connect( conn );
+    return _impl->connect( conn );
 }
 
 bool Receiver::connect( const co::NodeID& nodeID )
 {
-    return impl_->connect( nodeID );
+    return _impl->connect( nodeID );
 }
 
 bool Receiver::disconnect()
 {
-    return impl_->disconnect();
+    return _impl->disconnect();
 }
 
 bool Receiver::isConnected() const
 {
-    return impl_->isConnected();
+    return _impl->isConnected();
 }
 
 co::ConnectionDescriptionPtr Receiver::getConnection() const
 {
-    return impl_->getConnection();
+    return _impl->getConnection();
 }
 
 dash::Context& Receiver::getContext()
 {
-    return impl_->getContext();
+    return _impl->getContext();
 }
 
 const dash::Nodes& Receiver::getNodes() const
 {
-    return impl_->getNodes();
+    return _impl->getNodes();
 }
 
 bool Receiver::sync()
 {
-    return impl_->sync();
+    return _impl->sync();
 }
 
 }

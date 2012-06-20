@@ -110,7 +110,7 @@ public:
     CODASH_API void send( const dash::Commit& cmt );
 
 private:
-    detail::Sender* const impl_;
+    detail::Sender* const _impl;
 };
 
 }

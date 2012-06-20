@@ -23,6 +23,10 @@
 
 #include "objectFactory.h"
 
+#include <codash/distributable.h>
+
+#include <dash/node.h>
+
 
 namespace codash
 {
@@ -32,10 +36,11 @@ namespace detail
 using lunchbox::uint128_t;
 using lunchbox::make_uint128;
 
-static uint128_t groupID_( make_uint128( "codash::detail::groupID_" ));
-static uint128_t typeInit_( make_uint128( "codash::detail::typeInit_" ));
-static uint128_t initCmd_( make_uint128( "codash::detail::initCmd_" ));
+static uint128_t _groupID( make_uint128( "codash::detail::_groupID" ));
+static uint128_t _typeInit( make_uint128( "codash::detail::_typeInit" ));
+static uint128_t _initCmd( make_uint128( "codash::detail::_initCmd" ));
 
+typedef Distributable< dash::Node > Node;
 typedef boost::shared_ptr< Node > NodePtr;
 
 }

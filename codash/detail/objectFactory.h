@@ -21,11 +21,9 @@
 #ifndef CODASH_OBJECTFACTORY_H
 #define CODASH_OBJECTFACTORY_H
 
-#include <codash/distributable.h>
+#include "types.h"
 
 #include <co/objectFactory.h>
-
-#include <dash/node.h>
 
 
 namespace codash
@@ -37,8 +35,6 @@ enum ObjectType
 {
     OBJECTTYPE_NODE = co::OBJECTTYPE_CUSTOM
 };
-
-typedef Distributable< dash::Node > Node;
 
 class ObjectFactory : public co::ObjectFactory
 {

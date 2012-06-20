@@ -123,7 +123,7 @@ public:
     CODASH_API bool sync();
 
 private:
-    detail::Receiver* const impl_;
+    detail::Receiver* const _impl;
 };
 
 }

@@ -46,11 +46,11 @@ public:
 
     virtual ~Communicator() = 0;
 
-    co::ConstLocalNodePtr getNode() const { return localNode_; }
+    co::ConstLocalNodePtr getNode() const { return _localNode; }
 
-    co::Zeroconf getZeroconf() { return localNode_->getZeroconf(); }
+    co::Zeroconf getZeroconf() { return _localNode->getZeroconf(); }
 
-    dash::Context& getContext() { return *context_; }
+    dash::Context& getContext() { return *_context; }
 
 protected:
     virtual ChangeType getChangeType() const { return DELTA; }
@@ -61,11 +61,11 @@ protected:
         DIRTY_OBJECTMAP = co::Serializable::DIRTY_CUSTOM << 1
     };
 
-    Context context_;
-    co::LocalNodePtr localNode_;
-    co::ObjectMap* objectMap_;
-    ObjectFactory factory_;
-    const bool owner_;
+    Context _context;
+    co::LocalNodePtr _localNode;
+    co::ObjectMap* _objectMap;
+    ObjectFactory _factory;
+    const bool _owner;
 };
 
 }
