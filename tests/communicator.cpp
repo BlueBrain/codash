@@ -25,6 +25,11 @@
 #include <co/co.h>
 #include <dash/dash.h>
 
+#ifdef __APPLE__
+// following boost include causes shadowing warning. See also:
+// https://github.com/BlueBrain/dash/issues/2
+#  pragma GCC diagnostic ignored "-Wshadow"
+#endif
 #include <boost/serialization/vector.hpp>
 SERIALIZABLEANY( std::vector< int > )
 
