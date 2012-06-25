@@ -1,8 +1,8 @@
 
 /* Copyright (c) 2012, EFPL/Blue Brain Project
- *                     Daniel Nachbaur <danie.nachbaur@epfl.ch>
+ *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
- * This file is part of DASH <https://github.com/BlueBrain/dash>
+ * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
@@ -24,6 +24,10 @@
 #include <codash/codash.h>
 #include <co/co.h>
 #include <dash/dash.h>
+
+#include <boost/serialization/vector.hpp>
+SERIALIZABLEANY( std::vector< int > )
+
 
 int codash::test::main( int argc, char **argv )
 {
@@ -54,11 +58,19 @@ int codash::test::main( int argc, char **argv )
         TEST( receiver.getNodes().size() == 1 );
         TEST( newNode->getNAttributes() == 1 );
         TEST( *newNode->getAttribute( 0 ) == *node->getAttribute( 0 ));
+        TEST( newNode->getAttribute( 0 )->get<int>() == 5 );
 
         node->getAttribute( 0 )->set( 42 );
         sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( newNode->getAttribute( 0 )->get<int>() == 42 );
+
+        std::vector< int > vec( 10, 17 );
+        node->getAttribute( 0 )->set( vec );
+        sender.send( mainCtx.commit( ));
+        receiver.sync();
+        TEST( newNode->getAttribute( 0 )->get< std::vector< int > >().size() == 10 );
+        TEST( newNode->getAttribute( 0 )->get< std::vector< int > >()[3] == 17 );
     }
     mainCtx.commit();
     delete &mainCtx;

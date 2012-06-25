@@ -2,7 +2,7 @@
 /* Copyright (c) 2012, EFPL/Blue Brain Project
  *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch> 
  *
- * This file is part of CODASH <https://github.com/BlueBrain/codash>
+ * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
