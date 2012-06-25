@@ -1,5 +1,5 @@
 
-# Copyright (c) 2012 Daniel Nachbaur <danie.nachbaur@epfl.ch>
+# Copyright (c) 2012 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 

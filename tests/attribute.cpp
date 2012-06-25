@@ -1,8 +1,8 @@
 
 /* Copyright (c) 2012, EFPL/Blue Brain Project
- *                     Daniel Nachbaur <danie.nachbaur@epfl.ch>
+ *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
- * This file is part of DASH <https://github.com/BlueBrain/dash>
+ * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
