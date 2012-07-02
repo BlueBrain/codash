@@ -53,8 +53,7 @@ public:
         , _queuedVersions()
         , _objectMapVersion( co::VERSION_FIRST )
     {
-        _localNode->registerPushHandler( _groupID,
-                   boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
+        _init();
     }
 
     Receiver( co::LocalNodePtr localNode )
@@ -65,8 +64,7 @@ public:
         , _queuedVersions()
         , _objectMapVersion( co::VERSION_FIRST )
     {
-        _localNode->registerPushHandler( _groupID,
-                   boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
+        _init();
     }
 
     ~Receiver()
@@ -207,6 +205,12 @@ public:
     }
 
 private:
+    void _init()
+    {
+        _localNode->registerPushHandler( _groupID,
+                   boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
+    }
+
     void _connect()
     {
         co::NodeCommandPacket packet;
