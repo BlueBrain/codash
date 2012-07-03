@@ -39,14 +39,14 @@ Communicator::Communicator( int argc, char** argv,
     , _factory()
     , _owner( true )
 {
-    if( !co::init( argc, argv )) // exception?
-        return;
+    if( !co::init( argc, argv ))
+        throw std::runtime_error( "Collage initialization failed" );
 
     _localNode = new co::LocalNode;
     if( conn )
         _localNode->addConnectionDescription( conn );
     if( !_localNode->listen( ))
-        return;
+        throw std::runtime_error( "Listening connection setup failed" );
 
     _objectMap = new co::ObjectMap( *_localNode, _factory );
 }

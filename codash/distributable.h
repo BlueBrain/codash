@@ -28,7 +28,7 @@
 #include <co/dataIStreamArchive.h>
 #include <co/plugins/compressorTypes.h>
 
-#include <dash/detail/anySerialization.h>
+#include <lunchbox/anySerialization.h>
 
 
 namespace codash
@@ -60,12 +60,12 @@ public:
 protected:
     virtual void getInstanceData( co::DataOStream& os )
     {
-        dash::detail::serializeAny< co::DataOStreamArchive >( *_value, os );
+        lunchbox::serializeAny< co::DataOStreamArchive >( *_value, os );
     }
 
     virtual void applyInstanceData( co::DataIStream& is )
     {
-        dash::detail::serializeAny< co::DataIStreamArchive >( *_value, is );
+        lunchbox::serializeAny< co::DataIStreamArchive >( *_value, is );
     }
 
     virtual ChangeType getChangeType() const { return UNBUFFERED; }

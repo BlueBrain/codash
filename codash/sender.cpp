@@ -133,7 +133,7 @@ private:
     void _init()
     {
         if( !_localNode )
-            return;
+            throw std::runtime_error( "No localNode for sender init" );
 
         _localNode->registerObject( _objectMap );
         _localNode->registerObject( this );
