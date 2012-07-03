@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(codash)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
-list(APPEND CMAKE_PREFIX_PATH ${SystemDrive}:/cygwin/bin)
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
@@ -20,6 +19,7 @@ endif()
 
 include(Common)
 include(DoxygenSetup)
+include(UpdateFile)
 
 find_package(Boost 1.41 REQUIRED serialization)
 link_directories(${Boost_LIBRARY_DIRS})
