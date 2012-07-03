@@ -37,10 +37,7 @@ source_group(\\ FILES CMakeLists.txt ${CODASH_ALL})
 source_group(detail FILES ${CODASH_DETAIL_ALL})
 
 set(LIBRARY codash)
-set(LIB_INCLUDE ${LIBRARY})
-if(NOT MSVC)
-  set(LIB_INCLUDE ${LIB_INCLUDE}${VERSION_MAJOR})
-endif()
+set(LIB_INCLUDE codash)
 
 add_library(${LIBRARY} SHARED ${CODASH_ALL} ${CODASH_DETAIL_ALL})
 target_link_libraries(${LIBRARY} ${DASH_LIBRARIES} ${COLLAGE_LIBRARIES}
