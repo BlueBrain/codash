@@ -33,7 +33,6 @@ find_package(Collage 0.5.5 REQUIRED)
 link_directories(${COLLAGE_LIBRARY_DIRS})
 include_directories(${COLLAGE_INCLUDE_DIRS})
 
-include(InstallSymlink)
 add_subdirectory(codash)
 add_subdirectory(tests)
 add_subdirectory(doc)
