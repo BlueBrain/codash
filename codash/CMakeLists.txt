@@ -55,6 +55,3 @@ install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib
         LIBRARY DESTINATION lib COMPONENT lib)
-if(NOT MSVC)
-  install_symlink("include/${LIB_INCLUDE}" "include/${LIBRARY}" dev)
-endif()
