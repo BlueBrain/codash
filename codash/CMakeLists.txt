@@ -1,15 +1,16 @@
 
 # Copyright (c) 2012 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
 
-configure_file("version.h.in" "${CMAKE_CURRENT_BINARY_DIR}/version.h" @ONLY)
+update_file(${CMAKE_CURRENT_SOURCE_DIR}/version.in.h
+  ${OUTPUT_INCLUDE_DIR}/codash/version.h)
 
 set(CODASH_HEADERS # public, installed
+  ${OUTPUT_INCLUDE_DIR}/codash/version.h
   api.h
   codash.h
   distributable.h
   receiver.h
   sender.h
-  "${CMAKE_CURRENT_BINARY_DIR}/version.h"
 )
 
 set(CODASH_DETAIL_HEADERS # private, installed
@@ -19,6 +20,7 @@ set(CODASH_SOURCES
   codash.cpp
   receiver.cpp
   sender.cpp
+  version.cpp
 )
 
 set(CODASH_DETAIL_SOURCES
@@ -35,10 +37,7 @@ source_group(\\ FILES CMakeLists.txt ${CODASH_ALL})
 source_group(detail FILES ${CODASH_DETAIL_ALL})
 
 set(LIBRARY codash)
-set(LIB_INCLUDE ${LIBRARY})
-if(NOT MSVC)
-  set(LIB_INCLUDE ${LIB_INCLUDE}${VERSION_MAJOR})
-endif()
+set(LIB_INCLUDE codash)
 
 add_library(${LIBRARY} SHARED ${CODASH_ALL} ${CODASH_DETAIL_ALL})
 target_link_libraries(${LIBRARY} ${DASH_LIBRARIES} ${COLLAGE_LIBRARIES}
@@ -56,6 +55,3 @@ install(TARGETS ${LIBRARY}
         ARCHIVE DESTINATION lib COMPONENT dev
         RUNTIME DESTINATION bin COMPONENT lib
         LIBRARY DESTINATION lib COMPONENT lib)
-if(NOT MSVC)
-  install_symlink("include/${LIB_INCLUDE}" "include/${LIBRARY}" dev)
-endif()
