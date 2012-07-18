@@ -101,7 +101,7 @@ public:
     CODASH_API bool isConnected() const;
 
     /** @return the connection description of the sender. @version 0.1 */
-    CODASH_API co::ConnectionDescriptionPtr getConnection() const;
+    CODASH_API co::ConstConnectionDescriptionPtr getConnection() const;
 
     /** @return the dash::Context of this receiver. @version 0.1 */
     CODASH_API dash::Context& getContext();

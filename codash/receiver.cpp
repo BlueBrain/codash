@@ -115,10 +115,10 @@ public:
         return _proxyNode->isConnected();
     }
 
-    co::ConnectionDescriptionPtr getConnection() const
+    co::ConstConnectionDescriptionPtr getConnection() const
     {
         return _proxyNode ? _proxyNode->getConnection()->getDescription() :
-                            co::ConnectionDescriptionPtr();
+                            co::ConstConnectionDescriptionPtr();
     }
 
     const dash::Nodes& getNodes() const
@@ -296,7 +296,7 @@ bool Receiver::isConnected() const
     return _impl->isConnected();
 }
 
-co::ConnectionDescriptionPtr Receiver::getConnection() const
+co::ConstConnectionDescriptionPtr Receiver::getConnection() const
 {
     return _impl->getConnection();
 }
