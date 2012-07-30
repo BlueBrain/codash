@@ -1,7 +1,12 @@
 # Copyright (c) 2012 Stefan.Eilemann@epfl.ch
 # See doc/GitTargets.md for documentation
 
-find_package(Git REQUIRED)
+find_package(Git)
+if(NOT GIT_EXECUTABLE)
+  return()
+endif()
+
+find_program(GZIP_EXECUTABLE gzip)
 
 math(EXPR _gittargets_ODD_MINOR "${VERSION_MINOR} % 2")
 if(_gittargets_ODD_MINOR)
@@ -41,7 +46,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/gitbranchandtag.cmake
      RESULT_VARIABLE notdone WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
    if(notdone)
      message(FATAL_ERROR
-        \"Error creating tag release-${VERSION} on ${BRANCH_VERSION}\")
+        \"Error creating tag release-${VERSION} on branch ${BRANCH_VERSION}\")
    endif()")
 
 add_custom_target(tag
@@ -57,7 +62,29 @@ add_custom_target(erase
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   )
 
-set(_gittargets_TARGETS branch cut tag erase)
+add_custom_target(tarball-create
+  COMMAND ${GIT_EXECUTABLE} archive --worktree-attributes
+    --prefix ${CMAKE_PROJECT_NAME}-${VERSION}/
+    -o ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-${VERSION}.tar
+    release-${VERSION}
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+  COMMENT "Creating ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-${VERSION}.tar"
+  )
+
+if(GZIP_EXECUTABLE)
+  add_custom_target(tarball
+    COMMAND ${CMAKE_COMMAND} -E remove "${CMAKE_PROJECT_NAME}-${VERSION}.tar.gz"
+    COMMAND ${GZIP_EXECUTABLE} "${CMAKE_PROJECT_NAME}-${VERSION}.tar"
+    DEPENDS tarball-create
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT
+      "Compressing ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}-${VERSION}.tar.gz"
+  )
+else()
+  add_custom_target(tarball DEPENDS tarball-create)
+endif()
+
+set(_gittargets_TARGETS branch cut tag erase tarball tarball-create)
 foreach(_gittargets_TARGET ${_gittargets_TARGETS})
   set_target_properties(${_gittargets_TARGET} PROPERTIES EXCLUDE_FROM_ALL ON)
   set_target_properties(${_gittargets_TARGET} PROPERTIES FOLDER "git")
