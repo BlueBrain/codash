@@ -68,7 +68,7 @@ public:
     /** @return the used local node. @version 0.1 */
     CODASH_API co::ConstLocalNodePtr getNode() const;
 
-    /** @return a Zeroconf communicator handle for this node. @version 0.1 */
+    /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
 
     /**

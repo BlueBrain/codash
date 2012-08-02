@@ -72,7 +72,7 @@ public:
     /** @return the used local node. @version 0.1 */
     CODASH_API co::ConstLocalNodePtr getNode() const;
 
-    /** @return a Zeroconf communicator handle for this node. @version 0.1 */
+    /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
 
     /** @return the dash::Context of this sender. @version 0.1 */
@@ -82,7 +82,7 @@ public:
      * Register a dash::Node to this sender.
      *
      * Newly registered nodes will be propagated to connected receivers after
-     * the next commit().
+     * the next send().
      *
      * @param node the dash::Node to be registered.
      * @version 0.1
@@ -93,7 +93,7 @@ public:
      * Deregister a dash::Node from this sender.
      *
      * Degistered nodes will be propagated to connected receivers after
-     * the next commit().
+     * the next send().
      *
      * @param node the dash::Node to be deregistered.
      * @version 0.1
