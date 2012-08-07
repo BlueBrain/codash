@@ -30,9 +30,10 @@
 #include <dash/detail/commit.h>
 #include <dash/detail/serializable.h>
 
-#include <co/dataOStreamArchive.h>
+#include <co/dataIStream.h>
 #include <co/dataIStreamArchive.h>
-
+#include <co/dataOStream.h>
+#include <co/dataOStreamArchive.h>
 
 namespace dash
 {
