@@ -18,7 +18,6 @@ else()
 endif()
 
 include(Common)
-include(DoxygenSetup)
 include(FindPackages)
 include(UpdateFile)
 
