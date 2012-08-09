@@ -19,19 +19,8 @@ endif()
 
 include(Common)
 include(DoxygenSetup)
+include(FindPackages)
 include(UpdateFile)
-
-find_package(Boost 1.41 REQUIRED serialization)
-link_directories(${Boost_LIBRARY_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
-
-find_package(DASH 0.1.0 REQUIRED)
-link_directories(${DASH_LIBRARY_DIRS})
-include_directories(${DASH_INCLUDE_DIRS})
-
-find_package(Collage 0.5.5 REQUIRED)
-link_directories(${COLLAGE_LIBRARY_DIRS})
-include_directories(${COLLAGE_INCLUDE_DIRS})
 
 add_subdirectory(codash)
 add_subdirectory(tests)
