@@ -24,7 +24,7 @@
 
 #include <co/connectionDescription.h>
 #include <co/global.h>
-#include <co/packets.h>
+#include <co/nodeOCommand.h>
 #include <co/objectMap.h>
 
 #include <lunchbox/mtQueue.h>
@@ -217,9 +217,7 @@ private:
 
     void _connect()
     {
-        co::NodeCommandPacket packet;
-        packet.commandID = _initCmd;
-        _proxyNode->send( packet );
+        _proxyNode->send( co::CMD_NODE_COMMAND ) << _initCmd;
         _initialized.waitEQ( true );
         _processMappings();
         _objectMapVersion = _objectMap->getVersion();
