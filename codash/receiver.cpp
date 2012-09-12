@@ -7,12 +7,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,8 +23,8 @@
 #include "detail/types.h"
 
 #include <co/connectionDescription.h>
+#include <co/customOCommand.h>
 #include <co/global.h>
-#include <co/packets.h>
 #include <co/objectMap.h>
 
 #include <lunchbox/mtQueue.h>
@@ -185,8 +185,12 @@ public:
             is >> ov;
             _objectMapVersion = ov.version;
             if( !_objectMap->isAttached( ))
-                _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
-                                            _localNode.get(), _objectMap, ov ));
+            {
+                bool (co::LocalNode::*mapObject)(co::Object*,
+                          const co::ObjectVersion&) = &co::LocalNode::mapObject;
+                _mapQueue.push_back( boost::bind( mapObject, _localNode.get(),
+                                                  _objectMap, ov ));
+            }
         }
 
         Communicator::deserialize( is, dirtyBits );
@@ -213,9 +217,7 @@ private:
 
     void _connect()
     {
-        co::NodeCommandPacket packet;
-        packet.commandID = _initCmd;
-        _proxyNode->send( packet );
+        _proxyNode->send( _initCmd );
         _initialized.waitEQ( true );
         _processMappings();
         _objectMapVersion = _objectMap->getVersion();
@@ -228,8 +230,10 @@ private:
         LBASSERT( typeID == _typeInit );
 
         deserialize( istream, co::Serializable::DIRTY_ALL );
-        _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
-                      _localNode.get(), this, objectID, co::VERSION_NONE ));
+        bool (co::LocalNode::*mapObject)(co::Object*, const co::UUID&,
+                                  const uint128_t&) = &co::LocalNode::mapObject;
+        _mapQueue.push_back( boost::bind( mapObject, _localNode.get(), this,
+                                          objectID, co::VERSION_NONE ));
         _initialized = true;
     }
 
