@@ -7,12 +7,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -23,8 +23,8 @@
 #include "detail/types.h"
 
 #include <co/connectionDescription.h>
+#include <co/customOCommand.h>
 #include <co/global.h>
-#include <co/nodeOCommand.h>
 #include <co/objectMap.h>
 
 #include <lunchbox/mtQueue.h>
@@ -217,7 +217,7 @@ private:
 
     void _connect()
     {
-        _proxyNode->send( co::CMD_NODE_COMMAND ) << _initCmd;
+        _proxyNode->send( _initCmd );
         _initialized.waitEQ( true );
         _processMappings();
         _objectMapVersion = _objectMap->getVersion();
