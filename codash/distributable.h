@@ -69,6 +69,7 @@ protected:
     }
 
     // TODO: implement me. Get notification from Node & Attribute
+    // https://github.com/BlueBrain/codash/issues/3
     virtual bool isDirty() const { return true; }
 
     // TODO: implement DELTA change type
