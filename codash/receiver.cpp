@@ -40,7 +40,6 @@ namespace detail
 {
 
 typedef boost::function< void() > WorkFunc;
-typedef std::vector< uint128_t > IDVector;
 
 class Receiver : public Communicator
 {
@@ -167,17 +166,8 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            uint64_t size;
-            is >> size;
             _nodes.clear();
-            _nodes.reserve( size_t( size ));
-
-            for( uint64_t i = 0; i < size; ++i )
-            {
-                uint128_t id;
-                is >> id;
-                _nodes.push_back( id );
-            }
+            is >> _nodes;
         }
         if( dirtyBits & DIRTY_OBJECTMAP )
         {
@@ -248,7 +238,7 @@ private:
 
     co::NodePtr _proxyNode;
     std::deque< WorkFunc > _mapQueue;
-    IDVector _nodes;
+    IDSet _nodes;
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
     lunchbox::Monitor<bool> _initialized;
