@@ -28,17 +28,17 @@
 #include <co/customCommand.h>
 #include <co/objectMap.h>
 
+#include <lunchbox/hash.h>
+
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
-
-#include <map>
 
 namespace codash
 {
 namespace detail
 {
 
-typedef std::map< dash::NodePtr, NodePtr > NodeMap;
+typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
 
 class Sender : public Communicator
 {
