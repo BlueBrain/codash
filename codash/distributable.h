@@ -68,6 +68,11 @@ protected:
         lunchbox::serializeAny< co::DataIStreamArchive >( *_value, is );
     }
 
+    // TODO: implement me. Get notification from Node & Attribute
+    // https://github.com/BlueBrain/codash/issues/3
+    virtual bool isDirty() const { return true; }
+
+    // TODO: implement DELTA change type
     virtual ChangeType getChangeType() const { return UNBUFFERED; }
 
     virtual uint32_t chooseCompressor() const { return EQ_COMPRESSOR_NONE; }

@@ -28,17 +28,17 @@
 #include <co/customCommand.h>
 #include <co/objectMap.h>
 
+#include <lunchbox/hash.h>
+
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>
-
-#include <map>
 
 namespace codash
 {
 namespace detail
 {
 
-typedef std::map< dash::NodePtr, NodePtr > NodeMap;
+typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
 
 class Sender : public Communicator
 {
@@ -112,11 +112,12 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            os << static_cast< uint64_t >( _nodeMap.size( ));
+            IDSet nodes;
             BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
             {
-                os << entry.second->getID();
+                nodes.insert( entry.second->getID( ));
             }
+            os << nodes;
         }
         if( dirtyBits & DIRTY_OBJECTMAP )
             os << co::ObjectVersion( _objectMap );
