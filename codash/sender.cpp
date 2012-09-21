@@ -23,7 +23,7 @@
 #include "detail/communicator.h"
 #include "detail/types.h"
 
-#include <co/command.h>
+#include <co/iCommand.h>
 #include <co/connectionDescription.h>
 #include <co/customCommand.h>
 #include <co/objectMap.h>
