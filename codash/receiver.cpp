@@ -134,8 +134,10 @@ public:
         return nodes;
     }
 
-    virtual bool sync()
+    virtual bool syncAll()
     {
+        // TODO: Doxygen says 'applies latest', but this only applies one
+        // version?
         uint128_t version;
         while( !_queuedVersions.timedPop( co::Global::getKeepaliveTimeout(),
                                           version ))
@@ -307,7 +309,7 @@ const dash::Nodes& Receiver::getNodes() const
 
 bool Receiver::sync()
 {
-    return _impl->sync();
+    return _impl->syncAll();
 }
 
 }
