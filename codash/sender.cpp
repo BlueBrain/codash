@@ -25,7 +25,7 @@
 
 #include <co/iCommand.h>
 #include <co/connectionDescription.h>
-#include <co/customCommand.h>
+#include <co/customICommand.h>
 #include <co/objectMap.h>
 
 #include <lunchbox/hash.h>
@@ -144,7 +144,7 @@ private:
                                   _localNode->getCommandThreadQueue( ));
     }
 
-    bool _cmdConnect( co::CustomCommand& command )
+    bool _cmdConnect( co::CustomICommand& command )
     {
         co::Nodes nodes( 1, command.getNode( ));
 
