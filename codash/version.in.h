@@ -37,6 +37,9 @@ namespace codash
     /** The current patch level. @version 0.1 */
 #   define CODASH_VERSION_PATCH @VERSION_PATCH@
 
+    /** The git wc hash revision, may be 0. @version 0.1 */
+#   define CODASH_VERSION_REVISION @GIT_REVISION@
+
     /** The current DSO binary revision. @version 0.1 */
 #   define CODASH_VERSION_ABI @VERSION_ABI@
 
@@ -108,7 +111,7 @@ namespace codash
         /**
          * @return true if the link-time and compile-time DSO versions are
          *         compatible.
-         */ 
+         */
         static bool check()
         { return getMajor()==CODASH_VERSION_MAJOR &&
                  getMinor()==CODASH_VERSION_MINOR; }

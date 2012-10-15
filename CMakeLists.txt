@@ -18,6 +18,7 @@ else()
 endif()
 
 include(Common)
+include(revision)
 include(FindPackages)
 include(UpdateFile)
 

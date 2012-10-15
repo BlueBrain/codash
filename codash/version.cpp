@@ -27,45 +27,44 @@
 namespace codash
 {
 
-uint32_t Version::getMajor() 
+uint32_t Version::getMajor()
 {
-    return CODASH_VERSION_MAJOR; 
+    return CODASH_VERSION_MAJOR;
 }
 uint32_t Version::getMinor()
 {
-    return CODASH_VERSION_MINOR; 
+    return CODASH_VERSION_MINOR;
 }
-uint32_t Version::getPatch() 
+uint32_t Version::getPatch()
 {
-    return CODASH_VERSION_PATCH; 
+    return CODASH_VERSION_PATCH;
 }
-std::string Version::getRevision() 
+std::string Version::getRevision()
 {
     return std::string( QUOTE( CODASH_VERSION_REVISION ));
 }
-uint32_t Version::getABI() 
+uint32_t Version::getABI()
 {
-    return CODASH_VERSION_ABI; 
+    return CODASH_VERSION_ABI;
 }
 
 uint32_t Version::getInt()
 {
     return ( CODASH_VERSION_MAJOR * 10000 +
              CODASH_VERSION_MINOR * 100   +
-             CODASH_VERSION_PATCH ); 
+             CODASH_VERSION_PATCH );
 }
-float Version::getFloat() 
+float Version::getFloat()
 {
     return ( CODASH_VERSION_MAJOR +
              .01f   * CODASH_VERSION_MINOR   +
-             .0001f * CODASH_VERSION_PATCH ); 
+             .0001f * CODASH_VERSION_PATCH );
 }
 std::string Version::getString()
 {
     std::ostringstream  version;
-    version << CODASH_VERSION_MAJOR << '.' << CODASH_VERSION_MINOR;
-    if( CODASH_VERSION_PATCH > 0 )
-        version << '.' << CODASH_VERSION_PATCH;
+    version << CODASH_VERSION_MAJOR << '.' << CODASH_VERSION_MINOR << '.'
+            << CODASH_VERSION_PATCH;
 
     const std::string revision = getRevision();
     if( revision != "0" )
