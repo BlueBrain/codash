@@ -24,7 +24,7 @@ if(Collage_name)
   include_directories(${${Collage_name}_INCLUDE_DIRS})
 endif()
 
-find_package(Boost 1.41.0 REQUIRED serialization)
+find_package(Boost 1.41.0 REQUIRED program_options serialization)
 if(Boost_FOUND)
   set(Boost_name Boost)
 elseif(BOOST_FOUND)

@@ -24,6 +24,7 @@ include(UpdateFile)
 
 add_subdirectory(codash)
 add_subdirectory(tests)
+add_subdirectory(tools)
 add_subdirectory(doc)
 include(DoxygenRule)
 
