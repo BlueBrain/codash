@@ -190,6 +190,13 @@ dash::Context& Sender::getContext()
     return _impl->getContext();
 }
 
+bool Sender::hasPeers() const
+{
+    co::Nodes peers;
+    _impl->getNode()->getNodes( peers, false );
+    return !peers.empty();
+}
+
 void Sender::registerNode( dash::NodePtr node )
 {
     _impl->registerNode( node );
