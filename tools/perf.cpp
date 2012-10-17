@@ -71,9 +71,9 @@ private:
             ( "version,v", "Show version" )
             ( "connect,c", arg::value< std::string >(),
               "Connect to remote node" )
-            ( "dataSize,d", arg::value< size_t >()->default_value( _dataSize ),
+            ( "dataSize,d", arg::value< uint32_t >()->default_value( _dataSize ),
               "Data size in bytes" )
-            ( "numSends,n", arg::value< size_t >()->default_value( _numSends ),
+            ( "numSends,n", arg::value< uint32_t >()->default_value( _numSends ),
               "Number of sends" )
             ;
 
@@ -105,10 +105,10 @@ private:
             _connectString = vm["connect"].as< std::string >();
 
         if( vm.count( "dataSize" ))
-            _dataSize = vm["dataSize"].as< size_t >();
+            _dataSize = vm["dataSize"].as< uint32_t >();
 
         if( vm.count( "numSends" ))
-            _numSends = vm["numSends"].as< size_t >();
+            _numSends = vm["numSends"].as< uint32_t >();
 
         _mBytesSec = _dataSize / 1024.0f / 1024.0f * 1000.0f;
 
@@ -129,7 +129,7 @@ private:
         {
             receiver.sync();
             dash::AttributePtr attr = node->getAttribute( 0 );
-            _numSends = attr->get< size_t >();
+            _numSends = attr->get< uint32_t >();
             attr = node->getAttribute( 1 );
             _dataSize = attr->get< DataType >().size();
             _mBytesSec = _dataSize / 1024.0f / 1024.0f * 1000.0f;
@@ -139,7 +139,7 @@ private:
         while( receiver.sync( ))
         {
             dash::AttributePtr attr = node->getAttribute( 0 );
-            const size_t value = attr->get< size_t >();
+            const uint32_t value = attr->get< uint32_t >();
 
             const float time = clock.getTimef();
             std::cerr << "Recv perf: " << _mBytesSec / time << "MB/s ("
@@ -169,7 +169,7 @@ private:
             lunchbox::sleep( 500u );
 
         lunchbox::Clock clock;
-        for( size_t i = 0; i < _numSends; ++i )
+        for( uint32_t i = 0; i < _numSends; ++i )
         {
             node->getAttribute( 0 )->set( i+1 );
             sender.send( _mainCtx.commit( ));
@@ -191,8 +191,8 @@ private:
     }
 
     std::string _connectString;
-    size_t _numSends;
-    size_t _dataSize;
+    uint32_t _numSends;
+    uint32_t _dataSize;
     float _mBytesSec;
     dash::Context& _mainCtx;
 };
