@@ -1,4 +1,6 @@
 
+include(${CMAKE_CURRENT_LIST_DIR}/System.cmake)
+
 # Common settings
 enable_testing()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -76,6 +78,8 @@ endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CMAKE_COMPILER_IS_CLANG ON)
+elseif(CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_COMPILER_IS_GNUCXX_PURE ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANG)
