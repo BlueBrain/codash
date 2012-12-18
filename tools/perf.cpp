@@ -110,7 +110,7 @@ private:
         if( vm.count( "numSends" ))
             _numSends = vm["numSends"].as< uint32_t >();
 
-        _mBytesSec = _dataSize / 1024.0f / 1024.0f * 1000.0f;
+        _mBytesSec = _dataSize * sizeof(DataType::value_type) * 1000.0f / 1048576.f;
 
         return true;
     }
@@ -132,7 +132,7 @@ private:
             _numSends = attr->get< uint32_t >();
             attr = node->getAttribute( 1 );
             _dataSize = attr->get< DataType >().size();
-            _mBytesSec = _dataSize / 1024.0f / 1024.0f * 1000.0f;
+            _mBytesSec = _dataSize * sizeof(DataType::value_type) * 1000.0f / 1048576.f;
         }
 
         lunchbox::Clock clock;
