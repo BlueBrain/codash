@@ -25,15 +25,15 @@ endif()
 #   set(MODULE_ENV "
 #   setenv         FOO_INCLUDE_DIR  $root/include
 #   setenv         FOO_ROOT         $root
-#   append-path    PATH             $root/bin
-#   append-path    LD_LIBRARY_PATH  $root/lib")
+#   prepend-path   PATH             $root/bin
+#   prepend-path   LD_LIBRARY_PATH  $root/lib")
 if(NOT MODULE_ENV)
   string(TOUPPER ${CMAKE_PROJECT_NAME} UPPER_PROJECT_NAME)
   set(MODULE_ENV "
   setenv         ${UPPER_PROJECT_NAME}_INCLUDE_DIR  $root/include
   setenv         ${UPPER_PROJECT_NAME}_ROOT         $root
-  append-path    PATH             $root/bin
-  append-path    LD_LIBRARY_PATH  $root/lib")
+  prepend-path    PATH             $root/bin
+  prepend-path    LD_LIBRARY_PATH  $root/lib")
 endif()
 
 # the base directory containing all modules on a machine
@@ -57,11 +57,6 @@ if(NOT MODULE_MODULEFILES)
   set(MODULE_MODULEFILES "modulefiles")
 endif()
 
-# optional: list of required modules that need to be loaded before this module
-if(NOT MODULE_PREREQ)
-  set(MODULE_PREREQ "none")
-endif()
-
 
 ###############################################################################
 
@@ -73,7 +68,7 @@ compiler_dumpversion(MODULE_COMPILER_VERSION)
 
 # setup the module file content
 set(MODULE_PACKAGE_NAME ${CPACK_PROJECT_NAME})
-set(MODULE_VERSION ${VERSION})
+set(MODULE_VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
 if(LSB_DISTRIBUTOR_ID MATCHES "RedHatEnterpriseServer")
   set(MODULE_PLATFORM "rhel${LSB_RELEASE}-${CMAKE_SYSTEM_PROCESSOR}")
 elseif(LSB_DISTRIBUTOR_ID MATCHES "Ubuntu")
@@ -95,8 +90,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/${MODULE_FILENAME}
   "#\n"
   "# Module:      ${MODULE_FILENAME}\n"
   "#\n"
-  "# Prereq:\n"
-  "#   ${MODULE_PREREQ}\n"
   "#\n"
   "\n"
   "# Set internal variables\n"
