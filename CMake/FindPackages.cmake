@@ -3,7 +3,7 @@
 include(System)
 set(FIND_PACKAGES_FOUND ${SYSTEM} ${FIND_PACKAGES_FOUND_EXTRA})
 
-find_package(DASH 0.1.0 REQUIRED)
+find_package(DASH 1.1.0 REQUIRED)
 if(DASH_FOUND)
   set(DASH_name DASH)
 elseif(DASH_FOUND)
