@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2012, EFPL/Blue Brain Project
- *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+/* Copyright (c) 2012-2013, EFPL/Blue Brain Project
+ *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
@@ -33,5 +33,8 @@
 #include <codash/receiver.h>
 #include <codash/sender.h>
 #include <codash/version.h>
+
+#include <co/co.h>
+#include <dash/dash.h>
 
 #endif // CODASH_CODASH_H
