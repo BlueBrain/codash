@@ -19,8 +19,10 @@ endif()
 
 include(Common)
 include(revision)
-include(FindPackages)
 include(UpdateFile)
+
+include(FindPackages)
+set(CODASH_TRANSIENT_LIBRARIES Collage dash)
 
 add_subdirectory(codash)
 add_subdirectory(tests)
@@ -28,6 +30,12 @@ add_subdirectory(tools)
 add_subdirectory(doc)
 include(DoxygenRule)
 
-include(CTest)
 add_custom_target(package COMMENT "Packaging not done yet")
 # include(CPackConfig)
+
+set(CTEST_CUSTOM_WARNING_EXCEPTION ${CTEST_CUSTOM_WARNING_EXCEPTION}
+  # http://public.kitware.com/Bug/view.php?id=10179
+  "ld: warning: duplicate dylib")
+include(CTest)
+
+include(PackageConfig)
