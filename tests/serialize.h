@@ -119,7 +119,7 @@ struct Foo
         ar & f;
         ar & b;
         ar & s;
-    }    
+    }
 };
 
 SERIALIZABLEANY( Foo )
