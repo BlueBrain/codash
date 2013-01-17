@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, EFPL/Blue Brain Project
+/* Copyright (c) 2012, EPFL/Blue Brain Project
  *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CODASH <https://github.com/BlueBrain/codash>
@@ -70,12 +70,12 @@ public:
             lunchbox::Thread::setName( "Watchdog" );
 #ifdef DASH_TEST_RUNTIME
             lunchbox::sleep( DASH_TEST_RUNTIME * 1000 );
-            TESTINFO( false, 
+            TESTINFO( false,
                       "Watchdog triggered - " << _name <<
                       " did not terminate within " << DASH_TEST_RUNTIME << "s" );
 #else
             lunchbox::sleep( 60000 );
-            TESTINFO( false, 
+            TESTINFO( false,
                       "Watchdog triggered - " << _name <<
                       " did not terminate within 1 minute" );
 #endif
