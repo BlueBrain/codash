@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012-2013, EFPL/Blue Brain Project
+/* Copyright (c) 2012-2013, EPFL/Blue Brain Project
  *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CoDASH <https://github.com/BlueBrain/codash>
