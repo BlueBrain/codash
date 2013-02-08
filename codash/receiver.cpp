@@ -126,7 +126,7 @@ public:
         nodes.clear();
         BOOST_FOREACH( const uint128_t id, _nodes )
         {
-            Node* node = static_cast< Node* >( _objectMap->get( id ));
+            Node* node = static_cast< Node* >( _objectMap->map( id ));
             dash::NodePtr dashNode = node->getValue();
             nodes.push_back( dashNode );
         }
