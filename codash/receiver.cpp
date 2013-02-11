@@ -114,7 +114,7 @@ public:
         return _proxyNode->isConnected();
     }
 
-    co::ConstConnectionDescriptionPtr getConnection() const
+    co::ConstConnectionDescriptionPtr getConnection()
     {
         return _proxyNode ? _proxyNode->getConnection()->getDescription() :
                             co::ConstConnectionDescriptionPtr();
