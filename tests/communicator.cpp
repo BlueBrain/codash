@@ -39,7 +39,7 @@ int codash::test::main( int argc, char **argv )
     dash::Context& mainCtx = dash::Context::getMain( argc, argv );
     {
         lunchbox::RNG rng;
-        co::ConnectionDescriptionPtr sendDesc = new co::ConnectionDescription;        
+        co::ConnectionDescriptionPtr sendDesc = new co::ConnectionDescription;
         sendDesc->type = co::CONNECTIONTYPE_TCPIP;
         sendDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
         sendDesc->setHostname( "localhost" );

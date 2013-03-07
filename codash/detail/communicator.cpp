@@ -77,6 +77,9 @@ Communicator::~Communicator()
         LBASSERT( _localNode->getRefCount() == 1 );
         _localNode = 0;
     }
+
+    if( !co::exit( ))
+        LBWARN << "Collage exit failed" << std::endl;
 }
 
 }
