@@ -26,8 +26,8 @@
 #include <co/dataIStream.h>
 #include <co/dataOStreamArchive.h>
 #include <co/dataIStreamArchive.h>
-#include <co/plugins/compressorTypes.h>
 
+#include <lunchbox/plugins/compressorTypes.h>
 #include <lunchbox/anySerialization.h>
 
 
