@@ -7,12 +7,12 @@
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License version 3.0 as published
  * by the Free Software Foundation.
- *  
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -110,10 +110,10 @@ public:
     CODASH_API const dash::Nodes& getNodes() const;
 
     /**
-     * Receive new changes from the connected sender.
+     * Receive one new change from the connected sender.
      *
-     * It will apply the latest version on all dash::Nodes. The sync call
-     * will block until there is a new version coming from the sender or if the
+     * It will apply the next version on all dash::Nodes. The sync call will
+     * block until there is a new version coming from the sender or if the
      * timeout was reached.
      * @sa co::Global::getKeepaliveTimeout()
      *

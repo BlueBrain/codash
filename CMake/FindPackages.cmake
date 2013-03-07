@@ -43,6 +43,8 @@ if(Boost_name)
 endif()
 
 
+set(CODASH_DEPENDS dash;Collage;Boost)
+
 # Write defines.h and options.cmake
 if(NOT FIND_PACKAGES_INCLUDE)
   set(FIND_PACKAGES_INCLUDE
