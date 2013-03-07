@@ -82,9 +82,8 @@ public:
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
-        // TODO: need deregister_ func in objectMap!
-        //NodePtr node = nodeMap_[ dashNode ];
-        //objectMap_->deregister( node.get( ));
+        NodePtr node = _nodeMap[ dashNode ];
+        _objectMap->deregister( node.get( ));
         _nodeMap.erase( dashNode );
 
         _context->unmap( dashNode );
