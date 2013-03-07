@@ -68,6 +68,7 @@ public:
 
     ~Receiver()
     {
+        _objectMap->clear();
         disconnect();
     }
 

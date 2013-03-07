@@ -76,6 +76,10 @@ int codash::test::main( int argc, char **argv )
         receiver.sync();
         TEST( newNode->getAttribute( 0 )->get< std::vector< int > >().size() == 10 );
         TEST( newNode->getAttribute( 0 )->get< std::vector< int > >()[3] == 17 );
+
+        sender.deregisterNode( node );
+        sender.send( mainCtx.commit( ));
+        receiver.sync();
     }
     mainCtx.commit();
     delete &mainCtx;
