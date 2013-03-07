@@ -83,7 +83,7 @@ public:
         lunchbox::ScopedFastWrite mutex( _context );
 
         NodePtr node = _nodeMap[ dashNode ];
-        _objectMap->deregister( node.get( ));
+        //_objectMap->deregister( node.get( ));
         _nodeMap.erase( dashNode );
 
         _context->unmap( dashNode );
