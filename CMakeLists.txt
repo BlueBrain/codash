@@ -22,7 +22,7 @@ include(revision)
 include(UpdateFile)
 
 include(FindPackages)
-set(CODASH_TRANSIENT_LIBRARIES Collage dash)
+set(CODASH_DEPENDENT_LIBRARIES Collage dash)
 
 add_subdirectory(codash)
 add_subdirectory(tests)
