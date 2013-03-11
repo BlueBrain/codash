@@ -135,7 +135,7 @@ public:
         return nodes;
     }
 
-    virtual bool sync()
+    virtual bool syncOne()
     {
         uint128_t version;
         while( !_queuedVersions.timedPop( co::Global::getKeepaliveTimeout(),
@@ -308,7 +308,7 @@ const dash::Nodes& Receiver::getNodes() const
 
 bool Receiver::sync()
 {
-    return _impl->sync();
+    return _impl->syncOne();
 }
 
 }
