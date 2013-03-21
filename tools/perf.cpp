@@ -21,9 +21,11 @@
 #include <codash/codash.h>
 #include <dash/dash.h>
 
+#pragma warning( disable: 4275 )
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+#pragma warning( default: 4275 )
 
 #include <boost/serialization/vector.hpp>
 typedef std::vector< int > DataType;
