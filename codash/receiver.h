@@ -34,6 +34,9 @@ namespace detail { class Receiver; }
 
 using lunchbox::uint128_t;
 
+class Receiver;
+typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
+
 /**
  * The receiver side of the codash communicator pattern.
  *
@@ -43,7 +46,7 @@ using lunchbox::uint128_t;
  * connected sender. This receiver maintains an own dash context used for
  * holding received nodes.
  */
-class Receiver
+class Receiver : public lunchbox::Referenced
 {
 public:
     /**
@@ -64,6 +67,15 @@ public:
 
     /** Destruct this receiver. @version 0.1 */
     CODASH_API ~Receiver();
+
+    /** Create a managed receiver mapped to the identifier. @version 0.1 */
+    CODASH_API static ReceiverPtr create( const std::string& identifier );
+
+    /** Destroy a managed receiver by its identifier. @version 0.1 */
+    CODASH_API static void destroy( const std::string& identifier );
+
+    /** Destroy a managed receiver. @version 0.1 */
+    CODASH_API static void destroy( ReceiverPtr receiver );
 
     /** @return the used local node. @version 0.1 */
     CODASH_API co::ConstLocalNodePtr getNode() const;

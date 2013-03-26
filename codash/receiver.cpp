@@ -36,6 +36,11 @@
 
 namespace codash
 {
+
+typedef stde::hash_map< std::string, ReceiverPtr > Receivers;
+typedef Receivers::const_iterator ReceiversCIter;
+static Receivers _receivers;
+
 namespace detail
 {
 
@@ -259,6 +264,35 @@ Receiver::Receiver( co::LocalNodePtr localNode )
 Receiver::~Receiver()
 {
     delete _impl;
+}
+
+ReceiverPtr Receiver::create( const std::string& identifier )
+{
+    ReceiversCIter i = _receivers.find( identifier );
+    if( i != _receivers.end( ))
+        return i->second;
+    ReceiverPtr receiver = new Receiver( 0, 0 );
+    _receivers[identifier] = receiver;
+    return receiver;
+}
+
+void Receiver::destroy( const std::string& identifier )
+{
+    ReceiversCIter i = _receivers.find( identifier );
+    if( i != _receivers.end( ))
+        _receivers.erase( i );
+}
+
+void Receiver::destroy( ReceiverPtr receiver )
+{
+    for( ReceiversCIter i = _receivers.begin(); i != _receivers.end(); ++i )
+    {
+        if( i->second == receiver )
+        {
+            _receivers.erase( i );
+            break;
+        }
+    }
 }
 
 co::ConstLocalNodePtr Receiver::getNode() const

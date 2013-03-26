@@ -81,6 +81,9 @@ public:
     /** @return true if any receiver is connected & listening. @version 0.1 */
     CODASH_API bool hasPeers() const;
 
+    /** @return the list of all registered dash::Nodes. @version 0.1 */
+    CODASH_API dash::Nodes getNodes() const;
+
     /**
      * Register a dash::Node to this sender.
      *

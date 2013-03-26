@@ -62,7 +62,18 @@ public:
         _localNode->releaseObject( _objectMap );
         delete _objectMap;
         _objectMap = 0;
+        LBASSERTINFO( _nodeMap.empty(), "Nodes not deregistered" );
         _nodeMap.clear();
+    }
+
+    dash::Nodes getNodes() const
+    {
+        dash::Nodes nodes;
+        BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
+        {
+            nodes.push_back( entry.first );
+        }
+        return nodes;
     }
 
     void registerNode( dash::NodePtr dashNode )
@@ -194,6 +205,11 @@ bool Sender::hasPeers() const
     co::Nodes peers;
     _impl->getNode()->getNodes( peers, false );
     return !peers.empty();
+}
+
+dash::Nodes Sender::getNodes() const
+{
+    return _impl->getNodes();
 }
 
 void Sender::registerNode( dash::NodePtr node )
