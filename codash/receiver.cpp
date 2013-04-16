@@ -38,6 +38,7 @@ namespace codash
 {
 
 typedef stde::hash_map< std::string, ReceiverPtr > Receivers;
+typedef Receivers::iterator ReceiversIter;
 typedef Receivers::const_iterator ReceiversCIter;
 static Receivers _receivers;
 
@@ -278,14 +279,14 @@ ReceiverPtr Receiver::create( const std::string& identifier )
 
 void Receiver::destroy( const std::string& identifier )
 {
-    ReceiversCIter i = _receivers.find( identifier );
+    ReceiversIter i = _receivers.find( identifier );
     if( i != _receivers.end( ))
         _receivers.erase( i );
 }
 
 void Receiver::destroy( ReceiverPtr receiver )
 {
-    for( ReceiversCIter i = _receivers.begin(); i != _receivers.end(); ++i )
+    for( ReceiversIter i = _receivers.begin(); i != _receivers.end(); ++i )
     {
         if( i->second == receiver )
         {
