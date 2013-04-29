@@ -6,5 +6,5 @@ language: cpp
 script:
  - git clone --depth 10 https://github.com/Eyescale/Buildyard.git
  - cd Buildyard
- - git clone --depth 10 https://github.com/Eyescale/config.git config.bluebrain
+ - git clone --depth 10 https://github.com/BlueBrain/config.git config.bluebrain
  - make -j8 codash-test ARGS=-V
