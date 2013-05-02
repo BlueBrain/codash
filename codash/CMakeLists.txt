@@ -11,6 +11,7 @@ set(CODASH_HEADERS # public, installed
   distributable.h
   receiver.h
   sender.h
+  types.h
 )
 
 set(CODASH_DETAIL_HEADERS # private, installed

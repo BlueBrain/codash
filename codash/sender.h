@@ -22,10 +22,11 @@
 #define CODASH_SENDER_H
 
 #include <codash/api.h>
-
-#include <dash/types.h>
+#include <codash/types.h>
 
 #include <co/connectionDescription.h>
+#include <dash/types.h>
+
 
 namespace co { class Zeroconf; }
 
@@ -33,8 +34,6 @@ namespace co { class Zeroconf; }
 namespace codash
 {
 namespace detail { class Sender; }
-
-using lunchbox::uint128_t;
 
 /**
  * The sender side of the codash communicator pattern.

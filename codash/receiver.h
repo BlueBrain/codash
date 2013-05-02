@@ -22,6 +22,7 @@
 #define CODASH_RECEIVER_H
 
 #include <codash/api.h>
+#include <codash/types.h>
 
 #include <dash/types.h>
 
@@ -32,10 +33,6 @@ namespace codash
 {
 namespace detail { class Receiver; }
 
-using lunchbox::uint128_t;
-
-class Receiver;
-typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
 
 /**
  * The receiver side of the codash communicator pattern.

@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2012, EPFL/Blue Brain Project
- *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+/* Copyright (c) 2012-2013, EPFL/Blue Brain Project
+ *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
@@ -18,32 +18,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef CODASH_DETAIL_TYPES_H
-#define CODASH_DETAIL_TYPES_H
+#ifndef CODASH_TYPES_H
+#define CODASH_TYPES_H
 
-#include "objectFactory.h"
-
-#include <codash/distributable.h>
-#include <codash/types.h>
-#include <dash/node.h>
+#include <lunchbox/types.h>
+#include <lunchbox/refPtr.h>
 
 namespace codash
 {
-namespace detail
-{
 
-using lunchbox::make_uint128;
+class Receiver;
+class Sender;
 
-static uint128_t _groupID( make_uint128( "codash::detail::_groupID" ));
-static uint128_t _typeInit( make_uint128( "codash::detail::_typeInit" ));
-static uint128_t _initCmd( make_uint128( "codash::detail::_initCmd" ));
+typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
 
-typedef Distributable< dash::Node > Node;
-typedef boost::shared_ptr< Node > NodePtr;
-
-typedef stde::hash_set< uint128_t > IDSet;
+using lunchbox::uint128_t;
 
 }
-}
 
-#endif
+#endif // CODASH_TYPES_H
