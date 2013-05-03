@@ -31,7 +31,6 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/function/function0.hpp>
 
 
 namespace codash
@@ -196,8 +195,18 @@ public:
     virtual void notifyNewHeadVersion( const uint128_t& version )
     {
         if( version > co::VERSION_FIRST )
+        {
             _queuedVersions.push( version );
+            std::for_each( _handlers.begin(), _handlers.end(),
+                    boost::bind( &VersionHandlers::value_type::operator(), _1));
+        }
+
         Communicator::notifyNewHeadVersion( version );
+    }
+
+    void registerNewVersionHandler( const VersionHandler& func )
+    {
+        _handlers.push_back( func );
     }
 
     virtual uint64_t getMaxVersions() const
@@ -249,6 +258,8 @@ private:
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
     lunchbox::Monitor<bool> _initialized;
+    typedef std::vector< VersionHandler > VersionHandlers;
+    VersionHandlers _handlers;
 };
 }
 
@@ -267,12 +278,14 @@ Receiver::~Receiver()
     delete _impl;
 }
 
-ReceiverPtr Receiver::create( const std::string& identifier )
+ReceiverPtr Receiver::create( const std::string& identifier,
+                              co::LocalNodePtr localNode )
 {
     ReceiversCIter i = _receivers.find( identifier );
     if( i != _receivers.end( ))
         return i->second;
-    ReceiverPtr receiver = new Receiver( 0, 0 );
+    ReceiverPtr receiver = localNode ? new Receiver( localNode ) :
+                                       new Receiver( 0, 0 );
     _receivers[identifier] = receiver;
     return receiver;
 }
@@ -344,6 +357,11 @@ const dash::Nodes& Receiver::getNodes() const
 bool Receiver::sync()
 {
     return _impl->syncOne();
+}
+
+void Receiver::registerNewVersionHandler( const VersionHandler& func )
+{
+    return _impl->registerNewVersionHandler( func );
 }
 
 }

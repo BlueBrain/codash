@@ -23,9 +23,9 @@
 
 #include <codash/api.h>
 #include <codash/types.h>
-
 #include <dash/types.h>
 
+#include <boost/function/function0.hpp>
 #include <co/connectionDescription.h>
 
 
@@ -33,9 +33,11 @@ namespace codash
 {
 namespace detail { class Receiver; }
 
+/** Function signature for new version handler. @version 1.0 */
+typedef boost::function< void() > VersionHandler;
 
-/**
- * The receiver side of the codash communicator pattern.
+
+/** The receiver side of the codash communicator pattern.
  *
  * This receiver can use an existing Collage localNode for communication or it
  * creates its own using the provided connection description.
@@ -46,8 +48,7 @@ namespace detail { class Receiver; }
 class Receiver : public lunchbox::Referenced
 {
 public:
-    /**
-     * Construct a receiver with the given connection.
+    /** Construct a receiver with the given connection.
      *
      * The created local node is maintained by the receiver. It will listen on
      * the given connection description for an incoming sender. Additionally,
@@ -66,7 +67,8 @@ public:
     CODASH_API ~Receiver();
 
     /** Create a managed receiver mapped to the identifier. @version 0.1 */
-    CODASH_API static ReceiverPtr create( const std::string& identifier );
+    CODASH_API static ReceiverPtr create( const std::string& identifier,
+                                          co::LocalNodePtr localNode = 0 );
 
     /** Destroy a managed receiver by its identifier. @version 0.1 */
     CODASH_API static void destroy( const std::string& identifier );
@@ -80,8 +82,7 @@ public:
     /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
 
-    /**
-     * Connect to the given sender.
+    /** Connect to the given sender.
      *
      * @param conn the connection of the sender.
      * @return true if connect to sender was successful, false otherwise
@@ -89,8 +90,7 @@ public:
      */
     CODASH_API bool connect( co::ConnectionDescriptionPtr conn );
 
-    /**
-     * Connect to the given sender.
+    /** Connect to the given sender.
      *
      * @param nodeID the ID of the localNode of the sender.
      * @return true if connect to sender was successful, false otherwise
@@ -98,9 +98,8 @@ public:
      */
     CODASH_API bool connect( const co::NodeID& nodeID );
 
-    /**
-     * Disconnect from a connected sender.
-
+    /** Disconnect from a connected sender.
+     *
      * @return true if disconnect from sender was successful, false otherwise
      * @version 0.1
      */
@@ -118,8 +117,7 @@ public:
     /** @return the list of all received dash::Nodes. @version 0.1 */
     CODASH_API const dash::Nodes& getNodes() const;
 
-    /**
-     * Receive one new change from the connected sender.
+    /** Receive one new change from the connected sender.
      *
      * It will apply the next version on all dash::Nodes. The sync call will
      * block until there is a new version coming from the sender or if the
@@ -130,6 +128,17 @@ public:
      * @version 0.1
      */
     CODASH_API bool sync();
+
+    /** Register a handler for new available versions.
+     *
+     * On every incoming new version sent by the connected sender, the handlers
+     * will be called instantly from a separate thread. The notification can be
+     * used to schedule calls to sync() accordingly.
+     *
+     * @param func the handler function to be called on each new version
+     * @version 0.1
+     */
+    CODASH_API void registerNewVersionHandler( const VersionHandler& func );
 
 private:
     detail::Receiver* const _impl;
