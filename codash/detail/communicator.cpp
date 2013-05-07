@@ -21,7 +21,6 @@
 #include "communicator.h"
 
 #include <co/connectionDescription.h>
-#include <co/init.h>
 #include <co/objectMap.h>
 
 
@@ -39,9 +38,6 @@ Communicator::Communicator( int argc, char** argv,
     , _factory()
     , _owner( true )
 {
-    if( !co::init( argc, argv ))
-        throw std::runtime_error( "Collage initialization failed" );
-
     _localNode = new co::LocalNode;
     if( conn )
         _localNode->addConnectionDescription( conn );
@@ -77,9 +73,6 @@ Communicator::~Communicator()
         LBASSERT( _localNode->getRefCount() == 1 );
         _localNode = 0;
     }
-
-    if( !co::exit( ))
-        LBWARN << "Collage exit failed" << std::endl;
 }
 
 }

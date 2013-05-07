@@ -74,6 +74,7 @@ public:
     ~Receiver()
     {
         _objectMap->clear();
+        _dashNodes.clear();
         disconnect();
     }
 
@@ -128,16 +129,17 @@ public:
 
     const dash::Nodes& getNodes() const
     {
-        static dash::Nodes nodes;
-        nodes.clear();
+        if( !_dashNodes.empty( ))
+            return _dashNodes;
+
         BOOST_FOREACH( const uint128_t id, _nodes )
         {
             Node* node = static_cast< Node* >( _objectMap->map( id ));
             dash::NodePtr dashNode = node->getValue();
-            nodes.push_back( dashNode );
+            _dashNodes.push_back( dashNode );
         }
 
-        return nodes;
+        return _dashNodes;
     }
 
     virtual bool syncOne()
@@ -174,6 +176,7 @@ public:
         {
             _nodes.clear();
             is >> _nodes;
+            _dashNodes.clear();
         }
         if( dirtyBits & DIRTY_OBJECTMAP )
         {
@@ -255,6 +258,7 @@ private:
     co::NodePtr _proxyNode;
     std::deque< WorkFunc > _mapQueue;
     IDSet _nodes;
+    mutable dash::Nodes _dashNodes;
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
     lunchbox::Monitor<bool> _initialized;
