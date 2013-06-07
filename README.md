@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/BlueBrain/codash.png?branch=master)](https://travis-ci.org/BlueBrain/codash)
+
 # CoDASH
 
 ## Description
