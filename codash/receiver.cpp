@@ -197,18 +197,16 @@ public:
 
     virtual void notifyNewHeadVersion( const uint128_t& version )
     {
-        if( version > co::VERSION_FIRST )
-        {
-            _queuedVersions.push( version );
-            std::for_each( _handlers.begin(), _handlers.end(),
+        _queuedVersions.push( version );
+        std::for_each( _handlers.begin(), _handlers.end(),
                     boost::bind( &VersionHandlers::value_type::operator(), _1));
-        }
 
         Communicator::notifyNewHeadVersion( version );
     }
 
     void registerNewVersionHandler( const VersionHandler& func )
     {
+        LBASSERT( !isConnected( ));
         _handlers.push_back( func );
     }
 

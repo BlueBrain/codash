@@ -49,6 +49,9 @@ int codash::test::main( int argc, char **argv )
 
         TEST( receiver.connect( sendDesc ));
 
+        receiver.sync();
+        TEST( receiver.getNodes().empty( ));
+
         dash::NodePtr node = new dash::Node;
         sender.registerNode( node );
         sender.send( mainCtx.commit( ));
