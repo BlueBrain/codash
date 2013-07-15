@@ -18,7 +18,7 @@ else()
 endif()
 
 include(Common)
-include(revision)
+include(Revision)
 include(UpdateFile)
 
 include(FindPackages)
