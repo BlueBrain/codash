@@ -185,10 +185,9 @@ public:
             _objectMapVersion = ov.version;
             if( !_objectMap->isAttached( ))
             {
-                co::Futureb (co::LocalNode::*mapObject)(co::Object*,
-                          const co::ObjectVersion&) = &co::LocalNode::mapObject;
-                _mapQueue.push_back( boost::bind( mapObject, _localNode.get(),
-                                                  _objectMap, ov ));
+                _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+                                                  _localNode.get(), _objectMap,
+                                                  ov ));
             }
         }
 
@@ -237,10 +236,9 @@ private:
         LBASSERT( typeID == _typeInit );
 
         deserialize( istream, co::Serializable::DIRTY_ALL );
-        co::Futureb (co::LocalNode::*mapObject)(co::Object*, const co::UUID&,
-                                  const uint128_t&) = &co::LocalNode::mapObject;
-        _mapQueue.push_back( boost::bind( mapObject, _localNode.get(), this,
-                                          objectID, co::VERSION_NONE ));
+        _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
+                                          _localNode.get(), this, objectID,
+                                          co::VERSION_NONE ));
         _initialized = true;
     }
 
