@@ -5,6 +5,10 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(codash)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+include(Buildyard)
+if(BUILDYARD_STOP)
+  return()
+endif()
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
