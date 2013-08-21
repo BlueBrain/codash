@@ -132,7 +132,7 @@ public:
         if( !_dashNodes.empty( ))
             return _dashNodes;
 
-        BOOST_FOREACH( const uint128_t id, _nodes )
+        BOOST_FOREACH( const UUID& id, _nodes )
         {
             Node* node = static_cast< Node* >( _objectMap->map( id ));
             dash::NodePtr dashNode = node->getValue();
@@ -230,7 +230,7 @@ private:
     }
 
     void _handleInit( const uint128_t& groupID, const uint128_t& typeID,
-                      const uint128_t& objectID, co::DataIStream& istream )
+                      const UUID& objectID, co::DataIStream& istream )
     {
         LBASSERT( groupID == _groupID );
         LBASSERT( typeID == _typeInit );

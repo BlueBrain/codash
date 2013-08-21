@@ -33,6 +33,7 @@ class Sender;
 typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
 
 using lunchbox::uint128_t;
+using lunchbox::UUID;
 
 }
 
