@@ -123,8 +123,9 @@ public:
 
     co::ConstConnectionDescriptionPtr getConnection()
     {
-        return _proxyNode ? _proxyNode->getConnection()->getDescription() :
-                            co::ConstConnectionDescriptionPtr();
+        return _proxyNode && _proxyNode->isConnected()
+                    ? _proxyNode->getConnection()->getDescription()
+                    : co::ConstConnectionDescriptionPtr();
     }
 
     const dash::Nodes& getNodes() const
