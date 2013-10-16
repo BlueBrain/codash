@@ -88,8 +88,7 @@ public:
         if( !_localNode->connect( _proxyNode ))
             return false;
 
-        _connect();
-        return true;
+        return _connect();
     }
 
     bool connect( const co::NodeID& nodeID )
@@ -101,8 +100,7 @@ public:
         if( !_proxyNode )
             return false;
 
-        _connect();
-        return true;
+        return _connect();
     }
 
     bool disconnect()
@@ -222,19 +220,21 @@ private:
                    boost::bind( &Receiver::_handleInit, this, _1, _2, _3, _4 ));
     }
 
-    void _connect()
+    bool _connect()
     {
         _proxyNode->send( _initCmd );
-        _initialized.waitEQ( true );
+        if( !_initialized.timedWaitEQ( true, co::Global::getKeepaliveTimeout()))
+            return false;
         _processMappings();
         _objectMapVersion = _objectMap->getVersion();
+        return true;
     }
 
     void _handleInit( const uint128_t& groupID, const uint128_t& typeID,
                       const UUID& objectID, co::DataIStream& istream )
     {
-        LBASSERT( groupID == _groupID );
-        LBASSERT( typeID == _typeInit );
+        if( groupID != _groupID || typeID != _typeInit )
+            return;
 
         deserialize( istream, co::Serializable::DIRTY_ALL );
         _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
