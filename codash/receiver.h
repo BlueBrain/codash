@@ -51,17 +51,14 @@ public:
     /** Construct a receiver with the given connection.
      *
      * The created local node is maintained by the receiver. It will listen on
-     * the given connection description for an incoming sender. Additionally,
-     * the underlying Collage library will be initialized.
-     *
-     * @param argc the command line argument count.
-     * @param argv the command line argument values.
+     * the given connection description for an incoming sender. Note that the
+     * Collage library has to be initialized beforehand.
      * @version 0.1
      */
-    CODASH_API Receiver( int argc, char** argv );
+    CODASH_API Receiver();
 
     /** Construct a receiver with the given localNode. @version 0.1 */
-    CODASH_API Receiver( co::LocalNodePtr localNode );
+    CODASH_API explicit Receiver( co::LocalNodePtr localNode );
 
     /** Destruct this receiver. @version 0.1 */
     CODASH_API ~Receiver();

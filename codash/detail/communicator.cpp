@@ -29,8 +29,7 @@ namespace codash
 namespace detail
 {
 
-Communicator::Communicator( int argc, char** argv,
-                            co::ConnectionDescriptionPtr conn )
+Communicator::Communicator( co::ConnectionDescriptionPtr conn )
     : co::Serializable()
     , _context()
     , _localNode()

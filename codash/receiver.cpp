@@ -49,8 +49,8 @@ typedef boost::function< void() > WorkFunc;
 class Receiver : public Communicator
 {
 public:
-    Receiver( int argc, char** argv )
-        : Communicator( argc, argv, 0 )
+    Receiver()
+        : Communicator( co::ConnectionDescriptionPtr( ))
         , _proxyNode()
         , _mapQueue()
         , _nodes()
@@ -60,7 +60,7 @@ public:
         _init();
     }
 
-    Receiver( co::LocalNodePtr localNode )
+    explicit Receiver( co::LocalNodePtr localNode )
         : Communicator( localNode )
         , _proxyNode()
         , _mapQueue()
@@ -264,8 +264,8 @@ private:
 };
 }
 
-Receiver::Receiver( int argc, char** argv )
-    : _impl( new detail::Receiver( argc, argv ))
+Receiver::Receiver()
+    : _impl( new detail::Receiver )
 {
 }
 
@@ -286,7 +286,7 @@ ReceiverPtr Receiver::create( const std::string& identifier,
     if( i != _receivers.end( ))
         return i->second;
     ReceiverPtr receiver = localNode ? new Receiver( localNode ) :
-                                       new Receiver( 0, 0 );
+                                       new Receiver;
     _receivers[identifier] = receiver;
     return receiver;
 }

@@ -43,14 +43,14 @@ typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
 class Sender : public Communicator
 {
 public:
-    Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
-        : Communicator( argc, argv, conn )
+    explicit Sender( co::ConnectionDescriptionPtr conn )
+        : Communicator( conn )
         , _nodeMap()
     {
         _init();
     }
 
-    Sender( co::LocalNodePtr localNode )
+    explicit Sender( co::LocalNodePtr localNode )
         : Communicator( localNode )
         , _nodeMap()
     {
@@ -170,8 +170,8 @@ private:
 };
 }
 
-Sender::Sender( int argc, char** argv, co::ConnectionDescriptionPtr conn )
-    : _impl( new detail::Sender( argc, argv, conn ))
+Sender::Sender( co::ConnectionDescriptionPtr conn )
+    : _impl( new detail::Sender( conn ))
 {
 }
 

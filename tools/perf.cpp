@@ -123,7 +123,7 @@ private:
         remote->port = port;
         remote->fromString( _connectString );
 
-        codash::Receiver receiver( 0, 0 );
+        codash::Receiver receiver;
         if( !receiver.connect( remote ))
             return EXIT_FAILURE;
 
@@ -158,7 +158,7 @@ private:
     {
         co::ConnectionDescriptionPtr conndesc = new co::ConnectionDescription;
         conndesc->port = port;
-        codash::Sender sender( 0, 0, conndesc );
+        codash::Sender sender( conndesc );
 
         dash::NodePtr node = new dash::Node;
         sender.registerNode( node );

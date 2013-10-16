@@ -44,8 +44,8 @@ int codash::test::main( int argc, char **argv )
         sendDesc->port = (rng.get<uint16_t>() % 60000) + 1024;
         sendDesc->setHostname( "localhost" );
 
-        codash::Sender sender( argc, argv, sendDesc );
-        codash::Receiver receiver( argc, argv );
+        codash::Sender sender( sendDesc );
+        codash::Receiver receiver;
 
         TEST( receiver.connect( sendDesc ));
 
