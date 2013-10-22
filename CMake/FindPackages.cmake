@@ -2,10 +2,45 @@
 
 include(System)
 list(APPEND FIND_PACKAGES_DEFINES ${SYSTEM})
+find_package(PkgConfig)
 
-find_package(dash 1.1.0 REQUIRED)
-find_package(Collage 1.1.0 REQUIRED)
-find_package(Boost 1.41.0 REQUIRED program_options serialization)
+set(ENV{PKG_CONFIG_PATH} "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig:$ENV{PKG_CONFIG_PATH}")
+if(PKG_CONFIG_EXECUTABLE)
+  find_package(dash 1.1.0)
+  if((NOT dash_FOUND) AND (NOT DASH_FOUND))
+    pkg_check_modules(dash dash>=1.1.0)
+  endif()
+  if((NOT dash_FOUND) AND (NOT DASH_FOUND))
+    message(FATAL_ERROR "Could not find dash")
+  endif()
+else()
+  find_package(dash 1.1.0  REQUIRED)
+endif()
+
+if(PKG_CONFIG_EXECUTABLE)
+  find_package(Collage 1.1.0)
+  if((NOT Collage_FOUND) AND (NOT COLLAGE_FOUND))
+    pkg_check_modules(Collage Collage>=1.1.0)
+  endif()
+  if((NOT Collage_FOUND) AND (NOT COLLAGE_FOUND))
+    message(FATAL_ERROR "Could not find Collage")
+  endif()
+else()
+  find_package(Collage 1.1.0  REQUIRED)
+endif()
+
+if(PKG_CONFIG_EXECUTABLE)
+  find_package(Boost 1.41.0 COMPONENTS program_options serialization)
+  if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
+    pkg_check_modules(Boost Boost>=1.41.0)
+  endif()
+  if((NOT Boost_FOUND) AND (NOT BOOST_FOUND))
+    message(FATAL_ERROR "Could not find Boost")
+  endif()
+else()
+  find_package(Boost 1.41.0  REQUIRED program_options serialization)
+endif()
+
 
 if(EXISTS ${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
   include(${CMAKE_SOURCE_DIR}/CMake/FindPackagesPost.cmake)
@@ -56,7 +91,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(CODASH_BUILD_DEBS autoconf;automake;cmake;git;git-svn;libavahi-compat-libdnssd-dev;libboost-date-time-dev;libboost-program-options-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libibverbs-dev;libjpeg-turbo8-dev;librdmacm-dev;libturbojpeg;libudt-dev;pkg-config;subversion)
+set(CODASH_BUILD_DEBS autoconf;automake;cmake;git;git-review;git-svn;libavahi-compat-libdnssd-dev;libboost-date-time-dev;libboost-program-options-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libibverbs-dev;libjpeg-turbo8-dev;librdmacm-dev;libtclap-dev;libturbojpeg;libudt-dev;ninja-build;pkg-config;subversion)
 
 set(CODASH_DEPENDS dash;Collage;Boost)
 
@@ -75,10 +110,10 @@ file(WRITE ${DEFINES_FILE_IN}
   "#define ${CMAKE_PROJECT_NAME}_DEFINES_${SYSTEM}_H\n\n")
 file(WRITE ${OPTIONS_CMAKE} "# Optional modules enabled during build\n")
 foreach(DEF ${FIND_PACKAGES_DEFINES})
-  add_definitions(-D${DEF})
+  add_definitions(-D${DEF}=1)
   file(APPEND ${DEFINES_FILE_IN}
   "#ifndef ${DEF}\n"
-  "#  define ${DEF}\n"
+  "#  define ${DEF} 1\n"
   "#endif\n")
 if(NOT DEF STREQUAL SYSTEM)
   file(APPEND ${OPTIONS_CMAKE} "set(${DEF} ON)\n")

@@ -39,8 +39,7 @@ namespace codash
 typedef stde::hash_map< std::string, ReceiverPtr > Receivers;
 typedef Receivers::iterator ReceiversIter;
 typedef Receivers::const_iterator ReceiversCIter;
-static lunchbox::Lock _lock;
-static Receivers _receivers;
+static lunchbox::Lockable< Receivers > _receivers;
 
 namespace detail
 {
@@ -283,32 +282,32 @@ Receiver::~Receiver()
 ReceiverPtr Receiver::create( const std::string& identifier,
                               co::LocalNodePtr localNode )
 {
-    lunchbox::ScopedWrite mutex( _lock );
-    ReceiversCIter i = _receivers.find( identifier );
-    if( i != _receivers.end( ))
+    lunchbox::ScopedWrite mutex( _receivers );
+    ReceiversCIter i = _receivers->find( identifier );
+    if( i != _receivers->end( ))
         return i->second;
     ReceiverPtr receiver = localNode ? new Receiver( localNode ) :
                                        new Receiver;
-    _receivers[identifier] = receiver;
+    (*_receivers)[identifier] = receiver;
     return receiver;
 }
 
 void Receiver::destroy( const std::string& identifier )
 {
-    lunchbox::ScopedWrite mutex( _lock );
-    ReceiversIter i = _receivers.find( identifier );
-    if( i != _receivers.end( ))
-        _receivers.erase( i );
+    lunchbox::ScopedWrite mutex( _receivers );
+    ReceiversIter i = _receivers->find( identifier );
+    if( i != _receivers->end( ))
+        _receivers->erase( i );
 }
 
 void Receiver::destroy( ReceiverPtr receiver )
 {
-    lunchbox::ScopedWrite mutex( _lock );
-    for( ReceiversIter i = _receivers.begin(); i != _receivers.end(); ++i )
+    lunchbox::ScopedWrite mutex( _receivers );
+    for( ReceiversIter i = _receivers->begin(); i != _receivers->end(); ++i )
     {
         if( i->second == receiver )
         {
-            _receivers.erase( i );
+            _receivers->erase( i );
             break;
         }
     }
