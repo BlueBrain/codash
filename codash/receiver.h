@@ -107,13 +107,30 @@ public:
     /** @return the dash::Context of this receiver. @version 0.1 */
     CODASH_API dash::Context& getContext();
 
-    /** @return the list of all received dash::Nodes. @version 0.1 */
-    CODASH_API const dash::Nodes& getNodes() const;
+    /**
+     * @return the list of all mapped dash::Nodes, ordered by their identifier
+     * @version 0.1
+     */
+    CODASH_API dash::Nodes getNodes() const;
+
+    /** Map a dash node to the master instance on the sender side.
+     *
+     * If the node was already mapped, the already mapped instance will be
+     * returned. If the given identifier was not registered on the sender, an
+     * empty dash::Node will be returned.
+     *
+     * @param identifier the node was registered with this identifier on the
+     *                   sender side
+     * @return the mapped dash::Node with its latest version if mapping was
+     *         successful, 0 otherwise
+     * @version 0.1
+     */
+    CODASH_API dash::NodePtr mapNode( const uint32_t identifier );
 
     /** Receive one new change from the connected sender.
      *
-     * It will apply the next version on all dash::Nodes. The sync call will
-     * block until there is a new version coming from the sender or if the
+     * It will apply the next version on all mapped dash::Nodes. The sync call
+     * will block until there is a new version coming from the sender or if the
      * timeout was reached.
      * @sa co::Global::getKeepaliveTimeout()
      *

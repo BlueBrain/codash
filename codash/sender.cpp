@@ -38,7 +38,8 @@ namespace codash
 namespace detail
 {
 
-typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
+typedef std::pair< NodePtr, uint32_t > Node2TypePair;
+typedef lunchbox::RefPtrHash< dash::Node, Node2TypePair > NodeMap;
 
 class Sender : public Communicator
 {
@@ -76,14 +77,14 @@ public:
         return nodes;
     }
 
-    void registerNode( dash::NodePtr dashNode )
+    void registerNode( dash::NodePtr dashNode, const uint32_t identifier )
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
         dash::Context::getCurrent().map( dashNode, *_context );
 
         NodePtr node( new Node( dashNode ));
-        _nodeMap[ dashNode ] = node;
+        _nodeMap[ dashNode ] = std::make_pair( node, identifier );
         setDirty( DIRTY_NODES );
 
         _objectMap->register_( node.get(), OBJECTTYPE_NODE );
@@ -93,9 +94,10 @@ public:
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
-        NodePtr node = _nodeMap[ dashNode ];
+        NodePtr node = _nodeMap[ dashNode ].first;
         _objectMap->deregister( node.get( ));
         _nodeMap.erase( dashNode );
+        setDirty( DIRTY_NODES );
 
         _context->unmap( dashNode );
     }
@@ -122,10 +124,11 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            IDSet nodes;
+            Type2IDMap nodes;
             BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
             {
-                nodes.insert( entry.second->getID( ));
+                nodes.insert( std::make_pair( entry.second.second,
+                                              entry.second.first->getID( )));
             }
             os << nodes;
         }
@@ -212,9 +215,9 @@ dash::Nodes Sender::getNodes() const
     return _impl->getNodes();
 }
 
-void Sender::registerNode( dash::NodePtr node )
+void Sender::registerNode( dash::NodePtr node, const uint32_t identifier )
 {
-    _impl->registerNode( node );
+    _impl->registerNode( node, identifier );
 }
 
 void Sender::deregisterNode( dash::NodePtr node )

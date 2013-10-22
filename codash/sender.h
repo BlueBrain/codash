@@ -84,12 +84,15 @@ public:
      * Register a dash::Node to this sender.
      *
      * Newly registered nodes will be propagated to connected receivers after
-     * the next send().
+     * the next send(). Each node can be mapped individually on the receiving
+     * side using its identifier.
      *
      * @param node the dash::Node to be registered.
+     * @param identifier identify this node on the receiving side to map it
      * @version 0.1
      */
-    CODASH_API void registerNode( dash::NodePtr node );
+    CODASH_API void registerNode( dash::NodePtr node,
+                                  const uint32_t identifier );
 
     /**
      * Deregister a dash::Node from this sender.

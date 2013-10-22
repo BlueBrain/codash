@@ -127,7 +127,7 @@ private:
         if( !receiver.connect( remote ))
             return EXIT_FAILURE;
 
-        dash::NodePtr node = receiver.getNodes()[0];
+        dash::NodePtr node = receiver.mapNode( 0 );
         {
             receiver.sync();
             dash::AttributePtr attr = node->getAttribute( 0 );
@@ -161,7 +161,7 @@ private:
         codash::Sender sender( conndesc );
 
         dash::NodePtr node = new dash::Node;
-        sender.registerNode( node );
+        sender.registerNode( node, 0 );
         node->insert( new dash::Attribute( _numSends ));
         node->insert( new dash::Attribute( DataType( _dataSize )));
         sender.send( _mainCtx.commit( ));
