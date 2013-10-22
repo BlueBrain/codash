@@ -21,6 +21,8 @@
 #ifndef CODASH_TYPES_H
 #define CODASH_TYPES_H
 
+#include <boost/function/function0.hpp>
+
 #include <lunchbox/types.h>
 #include <lunchbox/refPtr.h>
 
@@ -34,6 +36,9 @@ typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
 
 using lunchbox::uint128_t;
 using lunchbox::UUID;
+
+/** Function signature for new version handler. @version 1.0 */
+typedef boost::function< void() > VersionHandler;
 
 }
 

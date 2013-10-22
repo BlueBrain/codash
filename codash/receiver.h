@@ -25,16 +25,12 @@
 #include <codash/types.h>
 #include <dash/types.h>
 
-#include <boost/function/function0.hpp>
 #include <co/connectionDescription.h>
 
 
 namespace codash
 {
 namespace detail { class Receiver; }
-
-/** Function signature for new version handler. @version 1.0 */
-typedef boost::function< void() > VersionHandler;
 
 
 /** The receiver side of the codash communicator pattern.
