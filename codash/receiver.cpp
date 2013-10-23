@@ -136,9 +136,15 @@ public:
         return nodes;
     }
 
-    dash::NodePtr mapNode( const uint32_t identifier )
+    dash::NodePtr getNode( const UUID& identifier ) const
     {
-        Type2IDMap::const_iterator i = _allNodes.find( identifier );
+        NodeMap::const_iterator i = _nodes.find( identifier );
+        return i != _nodes.end() ? i->second->getValue() : dash::NodePtr();
+    }
+
+    dash::NodePtr mapNode( const UUID& identifier )
+    {
+        IDSet::const_iterator i = _allNodes.find( identifier );
         if( i == _allNodes.end( ))
             return dash::NodePtr();
 
@@ -146,7 +152,7 @@ public:
         if( j != _nodes.end( ))
             return j->second->getValue();
 
-        Node* node = static_cast< Node* >( _objectMap->map( i->second ));
+        Node* node = static_cast< Node* >( _objectMap->map( identifier ));
         _nodes.insert( std::make_pair( identifier, node ));
         return node->getValue();
     }
@@ -185,7 +191,7 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            Type2IDMap newNodes;
+            IDSet newNodes;
             is >> newNodes;
 
             LBASSERT( _nodesToUnmap.empty( ));
@@ -272,22 +278,22 @@ private:
 
     void _processUnmappings()
     {
-        BOOST_FOREACH( const Type2IDMap::value_type& entry, _nodesToUnmap )
+        BOOST_FOREACH( const IDSet::value_type& entry, _nodesToUnmap )
         {
-            NodeMap::const_iterator i = _nodes.find( entry.first );
+            NodeMap::const_iterator i = _nodes.find( entry );
             _objectMap->unmap( i->second );
             _nodes.erase( i );
         }
         _nodesToUnmap.clear();
     }
 
-    typedef std::map< uint32_t, Node* > NodeMap;
+    typedef std::map< UUID, Node* > NodeMap;
     typedef std::vector< VersionHandler > VersionHandlers;
 
     co::NodePtr _proxyNode;
     std::deque< WorkFunc > _mapQueue;
-    Type2IDMap _allNodes;
-    Type2IDMap _nodesToUnmap;
+    IDSet _allNodes;
+    IDSet _nodesToUnmap;
     NodeMap _nodes;
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
@@ -345,9 +351,9 @@ void Receiver::destroy( ReceiverPtr receiver )
     }
 }
 
-co::ConstLocalNodePtr Receiver::getNode() const
+co::ConstLocalNodePtr Receiver::getLocalNode() const
 {
-    return _impl->getNode();
+    return _impl->getLocalNode();
 }
 
 co::Zeroconf Receiver::getZeroconf()
@@ -390,7 +396,12 @@ dash::Nodes Receiver::getNodes() const
     return _impl->getNodes();
 }
 
-dash::NodePtr Receiver::mapNode( const uint32_t identifier )
+dash::NodePtr Receiver::getNode( const UUID& identifier ) const
+{
+    return _impl->getNode( identifier );
+}
+
+dash::NodePtr Receiver::mapNode( const UUID& identifier )
 {
     return _impl->mapNode( identifier );
 }

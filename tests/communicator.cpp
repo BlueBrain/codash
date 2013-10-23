@@ -36,6 +36,8 @@ SERIALIZABLEANY( std::vector< int > )
 
 int codash::test::main( int argc, char **argv )
 {
+    const codash::UUID nodeID( lunchbox::make_uint128( "codash::test::nodeID" ));
+    const codash::UUID lateNodeID( lunchbox::make_uint128( "codash::test::lateNodeID" ));
     dash::Context& mainCtx = dash::Context::getMain( argc, argv );
     {
         lunchbox::RNG rng;
@@ -56,11 +58,11 @@ int codash::test::main( int argc, char **argv )
         dash::NodePtr lateNode = new dash::Node;
 
         // register 2, map 1 node
-        sender.registerNode( node, 0 );
-        sender.registerNode( lateNode, 1 );
+        sender.registerNode( node, nodeID );
+        sender.registerNode( lateNode, lateNodeID );
         sender.send( mainCtx.commit( ));
         receiver.sync();
-        dash::NodePtr newNode = receiver.mapNode( 0 );
+        dash::NodePtr newNode = receiver.mapNode( nodeID );
         TEST( newNode );
         TEST( receiver.getNodes().size() == 1 );
         TEST( newNode == receiver.getNodes()[0] );
@@ -94,10 +96,10 @@ int codash::test::main( int argc, char **argv )
         TEST( newNode->getAttribute( 0 )->get< std::vector< int > >()[3] == 17 );
 
         // late map second node
-        dash::NodePtr newLateNode = receiver.mapNode( 1 );
+        dash::NodePtr newLateNode = receiver.mapNode( lateNodeID );
         TEST( newLateNode );
         TEST( receiver.getNodes().size() == 2 );
-        TEST( newLateNode == receiver.getNodes()[1] );
+        TEST( newLateNode == receiver.getNode( lateNodeID ));
         TEST( *lateNode == *newLateNode );
         TEST( newLateNode->getAttribute( 0 )->get<int>() == 5 );
 

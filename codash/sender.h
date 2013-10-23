@@ -66,7 +66,7 @@ public:
     CODASH_API ~Sender();
 
     /** @return the used local node. @version 0.1 */
-    CODASH_API co::ConstLocalNodePtr getNode() const;
+    CODASH_API co::ConstLocalNodePtr getLocalNode() const;
 
     /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
@@ -92,7 +92,7 @@ public:
      * @version 0.1
      */
     CODASH_API void registerNode( dash::NodePtr node,
-                                  const uint32_t identifier );
+                                  const UUID& identifier );
 
     /**
      * Deregister a dash::Node from this sender.

@@ -70,7 +70,7 @@ public:
     CODASH_API static void destroy( ReceiverPtr receiver );
 
     /** @return the used local node. @version 0.1 */
-    CODASH_API co::ConstLocalNodePtr getNode() const;
+    CODASH_API co::ConstLocalNodePtr getLocalNode() const;
 
     /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
@@ -108,10 +108,18 @@ public:
     CODASH_API dash::Context& getContext();
 
     /**
-     * @return the list of all mapped dash::Nodes, ordered by their identifier
+     * @return the list of all mapped dash::Nodes
      * @version 0.1
      */
     CODASH_API dash::Nodes getNodes() const;
+
+    /** Get an already mapped dash::Node matching the given identifier.
+     *
+     * @param identifier the node ID that was used for registering this node
+     * @return the dash::Node to the given identifier if mapped, 0 otherwise
+     * @version 0.1
+     */
+    CODASH_API dash::NodePtr getNode( const UUID& identifier ) const;
 
     /** Map a dash node to the master instance on the sender side.
      *
@@ -125,7 +133,7 @@ public:
      *         successful, 0 otherwise
      * @version 0.1
      */
-    CODASH_API dash::NodePtr mapNode( const uint32_t identifier );
+    CODASH_API dash::NodePtr mapNode( const UUID& identifier );
 
     /** Receive one new change from the connected sender.
      *

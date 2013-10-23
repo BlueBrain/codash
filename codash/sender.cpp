@@ -38,8 +38,7 @@ namespace codash
 namespace detail
 {
 
-typedef std::pair< NodePtr, uint32_t > Node2TypePair;
-typedef lunchbox::RefPtrHash< dash::Node, Node2TypePair > NodeMap;
+typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
 
 class Sender : public Communicator
 {
@@ -77,14 +76,15 @@ public:
         return nodes;
     }
 
-    void registerNode( dash::NodePtr dashNode, const uint32_t identifier )
+    void registerNode( dash::NodePtr dashNode, const UUID& identifier )
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
         dash::Context::getCurrent().map( dashNode, *_context );
 
         NodePtr node( new Node( dashNode ));
-        _nodeMap[ dashNode ] = std::make_pair( node, identifier );
+        node->setID( identifier );
+        _nodeMap[ dashNode ] = node;
         setDirty( DIRTY_NODES );
 
         _objectMap->register_( node.get(), OBJECTTYPE_NODE );
@@ -94,7 +94,7 @@ public:
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
-        NodePtr node = _nodeMap[ dashNode ].first;
+        NodePtr node = _nodeMap[ dashNode ];
         _objectMap->deregister( node.get( ));
         _nodeMap.erase( dashNode );
         setDirty( DIRTY_NODES );
@@ -124,11 +124,10 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            Type2IDMap nodes;
+            IDSet nodes;
             BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
             {
-                nodes.insert( std::make_pair( entry.second.second,
-                                              entry.second.first->getID( )));
+                nodes.insert( entry.second->getID( ));
             }
             os << nodes;
         }
@@ -188,9 +187,9 @@ Sender::~Sender()
     delete _impl;
 }
 
-co::ConstLocalNodePtr Sender::getNode() const
+co::ConstLocalNodePtr Sender::getLocalNode() const
 {
-    return _impl->getNode();
+    return _impl->getLocalNode();
 }
 
 co::Zeroconf Sender::getZeroconf()
@@ -206,7 +205,7 @@ dash::Context& Sender::getContext()
 bool Sender::hasPeers() const
 {
     co::Nodes peers;
-    _impl->getNode()->getNodes( peers, false );
+    _impl->getLocalNode()->getNodes( peers, false );
     return !peers.empty();
 }
 
@@ -215,7 +214,7 @@ dash::Nodes Sender::getNodes() const
     return _impl->getNodes();
 }
 
-void Sender::registerNode( dash::NodePtr node, const uint32_t identifier )
+void Sender::registerNode( dash::NodePtr node, const UUID& identifier )
 {
     _impl->registerNode( node, identifier );
 }
