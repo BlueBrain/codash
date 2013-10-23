@@ -287,7 +287,7 @@ private:
         _nodesToUnmap.clear();
     }
 
-    typedef std::map< UUID, Node* > NodeMap;
+    typedef stde::hash_map< UUID, Node* > NodeMap;
     typedef std::vector< VersionHandler > VersionHandlers;
 
     co::NodePtr _proxyNode;

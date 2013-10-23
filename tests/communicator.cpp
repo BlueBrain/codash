@@ -103,8 +103,8 @@ int codash::test::main( int argc, char **argv )
         TEST( *lateNode == *newLateNode );
         TEST( newLateNode->getAttribute( 0 )->get<int>() == 5 );
 
-        TEST( sender.deregisterNode( node ));
-        TEST( sender.deregisterNode( lateNode ));
+        TEST( sender.deregisterNode( nodeID ));
+        TEST( sender.deregisterNode( lateNodeID ));
         sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( receiver.getNodes().empty( ));

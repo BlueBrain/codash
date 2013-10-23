@@ -80,6 +80,14 @@ public:
     /** @return the list of all registered dash::Nodes. @version 0.1 */
     CODASH_API dash::Nodes getNodes() const;
 
+    /** Get an already registered dash::Node matching the given identifier.
+     *
+     * @param identifier the node ID that was used for registering this node
+     * @return the dash::Node to the given identifier if mapped, 0 otherwise
+     * @version 0.1
+     */
+    CODASH_API dash::NodePtr getNode( const UUID& identifier ) const;
+
     /**
      * Register a dash::Node to this sender.
      *
@@ -101,11 +109,11 @@ public:
      * Degistered nodes will be propagated to connected receivers after
      * the next send().
      *
-     * @param node the dash::Node to be deregistered.
+     * @param identifier the node was registered with this identifier
      * @return true if the node was successfully deregistered
      * @version 0.1
      */
-    CODASH_API bool deregisterNode( dash::NodePtr node );
+    CODASH_API bool deregisterNode( const UUID& identifier );
 
     /**
      * Apply provided changes and propagate them to connected receivers.

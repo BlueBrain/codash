@@ -38,7 +38,7 @@ namespace codash
 namespace detail
 {
 
-typedef lunchbox::RefPtrHash< dash::Node, NodePtr > NodeMap;
+typedef stde::hash_map< UUID, NodePtr > NodeMap;
 
 class Sender : public Communicator
 {
@@ -71,35 +71,47 @@ public:
         dash::Nodes nodes;
         BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
         {
-            nodes.push_back( entry.first );
+            nodes.push_back( entry.second->getValue( ));
         }
         return nodes;
     }
 
+    dash::NodePtr getNode( const UUID& identifier ) const
+    {
+        NodeMap::const_iterator i = _nodeMap.find( identifier );
+        return i != _nodeMap.end() ? i->second->getValue() : dash::NodePtr();
+    }
+
     bool registerNode( dash::NodePtr dashNode, const UUID& identifier )
     {
+        if( _nodeMap.find( identifier ) != _nodeMap.end( ))
+            return false;
+
         lunchbox::ScopedFastWrite mutex( _context );
 
         dash::Context::getCurrent().map( dashNode, *_context );
 
         NodePtr node( new Node( dashNode ));
         node->setID( identifier );
-        _nodeMap[ dashNode ] = node;
+        _nodeMap[ identifier ] = node;
         setDirty( DIRTY_NODES );
 
         return _objectMap->register_( node.get(), OBJECTTYPE_NODE );
     }
 
-    bool deregisterNode( dash::NodePtr dashNode )
+    bool deregisterNode( const UUID& identifier )
     {
+        if( _nodeMap.find( identifier ) == _nodeMap.end( ))
+            return false;
+
         lunchbox::ScopedFastWrite mutex( _context );
 
-        NodePtr node = _nodeMap[ dashNode ];
+        NodePtr node = _nodeMap[ identifier ];
         const bool ok = _objectMap->deregister( node.get( ));
-        _nodeMap.erase( dashNode );
+        _nodeMap.erase( identifier );
         setDirty( DIRTY_NODES );
 
-        _context->unmap( dashNode );
+        _context->unmap( node->getValue( ));
         return ok;
     }
 
@@ -128,7 +140,7 @@ public:
             IDSet nodes;
             BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
             {
-                nodes.insert( entry.second->getID( ));
+                nodes.insert( entry.first );
             }
             os << nodes;
         }
@@ -215,14 +227,19 @@ dash::Nodes Sender::getNodes() const
     return _impl->getNodes();
 }
 
+dash::NodePtr Sender::getNode( const UUID& identifier ) const
+{
+    return _impl->getNode( identifier );
+}
+
 bool Sender::registerNode( dash::NodePtr node, const UUID& identifier )
 {
     return _impl->registerNode( node, identifier );
 }
 
-bool Sender::deregisterNode( dash::NodePtr node )
+bool Sender::deregisterNode( const UUID& identifier )
 {
-    return _impl->deregisterNode( node );
+    return _impl->deregisterNode( identifier );
 }
 
 void Sender::send( const dash::Commit& cmt )
