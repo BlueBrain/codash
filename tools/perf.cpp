@@ -33,6 +33,7 @@ SERIALIZABLEANY( DataType )
 
 
 const uint16_t port = 4242u;
+const codash::UUID dataNodeID( lunchbox::make_uint128( "codash::perf::dataNodeID" ));
 
 class Perftool
 {
@@ -127,7 +128,7 @@ private:
         if( !receiver.connect( remote ))
             return EXIT_FAILURE;
 
-        dash::NodePtr node = receiver.getNodes()[0];
+        dash::NodePtr node = receiver.mapNode( dataNodeID );
         {
             receiver.sync();
             dash::AttributePtr attr = node->getAttribute( 0 );
@@ -161,7 +162,7 @@ private:
         codash::Sender sender( conndesc );
 
         dash::NodePtr node = new dash::Node;
-        sender.registerNode( node );
+        sender.registerNode( node, dataNodeID );
         node->insert( new dash::Attribute( _numSends ));
         node->insert( new dash::Attribute( DataType( _dataSize )));
         sender.send( _mainCtx.commit( ));

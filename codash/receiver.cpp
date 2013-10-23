@@ -53,7 +53,7 @@ public:
         : Communicator( co::ConnectionDescriptionPtr( ))
         , _proxyNode()
         , _mapQueue()
-        , _nodes()
+        , _allNodes()
         , _queuedVersions()
         , _objectMapVersion( co::VERSION_FIRST )
     {
@@ -64,7 +64,7 @@ public:
         : Communicator( localNode )
         , _proxyNode()
         , _mapQueue()
-        , _nodes()
+        , _allNodes()
         , _queuedVersions()
         , _objectMapVersion( co::VERSION_FIRST )
     {
@@ -74,7 +74,7 @@ public:
     ~Receiver()
     {
         _objectMap->clear();
-        _dashNodes.clear();
+        _nodes.clear();
         disconnect();
     }
 
@@ -126,19 +126,35 @@ public:
                     : co::ConstConnectionDescriptionPtr();
     }
 
-    const dash::Nodes& getNodes() const
+    dash::Nodes getNodes() const
     {
-        if( !_dashNodes.empty( ))
-            return _dashNodes;
-
-        BOOST_FOREACH( const UUID& id, _nodes )
+        dash::Nodes nodes;
+        BOOST_FOREACH( const NodeMap::value_type& entry, _nodes )
         {
-            Node* node = static_cast< Node* >( _objectMap->map( id ));
-            dash::NodePtr dashNode = node->getValue();
-            _dashNodes.push_back( dashNode );
+            nodes.push_back( entry.second->getValue( ));
         }
+        return nodes;
+    }
 
-        return _dashNodes;
+    dash::NodePtr getNode( const UUID& identifier ) const
+    {
+        NodeMap::const_iterator i = _nodes.find( identifier );
+        return i != _nodes.end() ? i->second->getValue() : dash::NodePtr();
+    }
+
+    dash::NodePtr mapNode( const UUID& identifier )
+    {
+        IDSet::const_iterator i = _allNodes.find( identifier );
+        if( i == _allNodes.end( ))
+            return dash::NodePtr();
+
+        NodeMap::const_iterator j = _nodes.find( identifier );
+        if( j != _nodes.end( ))
+            return j->second->getValue();
+
+        Node* node = static_cast< Node* >( _objectMap->map( identifier ));
+        _nodes.insert( std::make_pair( identifier, node ));
+        return node->getValue();
     }
 
     virtual bool syncOne()
@@ -160,6 +176,8 @@ public:
         Communicator::sync( version );
         _objectMap->sync( _objectMapVersion );
 
+        _processUnmappings();
+
         return true;
     }
 
@@ -173,9 +191,15 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            _nodes.clear();
-            is >> _nodes;
-            _dashNodes.clear();
+            IDSet newNodes;
+            is >> newNodes;
+
+            LBASSERT( _nodesToUnmap.empty( ));
+            std::set_difference( _allNodes.begin(), _allNodes.end(),
+                                 newNodes.begin(), newNodes.end(),
+                                 std::inserter( _nodesToUnmap,
+                                                _nodesToUnmap.end( )));
+            _allNodes = newNodes;
         }
         if( dirtyBits & DIRTY_OBJECTMAP )
         {
@@ -252,14 +276,28 @@ private:
         _mapQueue.clear();
     }
 
+    void _processUnmappings()
+    {
+        BOOST_FOREACH( const IDSet::value_type& entry, _nodesToUnmap )
+        {
+            NodeMap::const_iterator i = _nodes.find( entry );
+            _objectMap->unmap( i->second );
+            _nodes.erase( i );
+        }
+        _nodesToUnmap.clear();
+    }
+
+    typedef std::map< UUID, Node* > NodeMap;
+    typedef std::vector< VersionHandler > VersionHandlers;
+
     co::NodePtr _proxyNode;
     std::deque< WorkFunc > _mapQueue;
-    IDSet _nodes;
-    mutable dash::Nodes _dashNodes;
+    IDSet _allNodes;
+    IDSet _nodesToUnmap;
+    NodeMap _nodes;
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
     lunchbox::Monitor<bool> _initialized;
-    typedef std::vector< VersionHandler > VersionHandlers;
     VersionHandlers _handlers;
 };
 }
@@ -313,9 +351,9 @@ void Receiver::destroy( ReceiverPtr receiver )
     }
 }
 
-co::ConstLocalNodePtr Receiver::getNode() const
+co::ConstLocalNodePtr Receiver::getLocalNode() const
 {
-    return _impl->getNode();
+    return _impl->getLocalNode();
 }
 
 co::Zeroconf Receiver::getZeroconf()
@@ -353,9 +391,19 @@ dash::Context& Receiver::getContext()
     return _impl->getContext();
 }
 
-const dash::Nodes& Receiver::getNodes() const
+dash::Nodes Receiver::getNodes() const
 {
     return _impl->getNodes();
+}
+
+dash::NodePtr Receiver::getNode( const UUID& identifier ) const
+{
+    return _impl->getNode( identifier );
+}
+
+dash::NodePtr Receiver::mapNode( const UUID& identifier )
+{
+    return _impl->mapNode( identifier );
 }
 
 bool Receiver::sync()

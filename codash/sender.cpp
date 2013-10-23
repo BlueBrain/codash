@@ -76,13 +76,14 @@ public:
         return nodes;
     }
 
-    void registerNode( dash::NodePtr dashNode )
+    void registerNode( dash::NodePtr dashNode, const UUID& identifier )
     {
         lunchbox::ScopedFastWrite mutex( _context );
 
         dash::Context::getCurrent().map( dashNode, *_context );
 
         NodePtr node( new Node( dashNode ));
+        node->setID( identifier );
         _nodeMap[ dashNode ] = node;
         setDirty( DIRTY_NODES );
 
@@ -96,6 +97,7 @@ public:
         NodePtr node = _nodeMap[ dashNode ];
         _objectMap->deregister( node.get( ));
         _nodeMap.erase( dashNode );
+        setDirty( DIRTY_NODES );
 
         _context->unmap( dashNode );
     }
@@ -185,9 +187,9 @@ Sender::~Sender()
     delete _impl;
 }
 
-co::ConstLocalNodePtr Sender::getNode() const
+co::ConstLocalNodePtr Sender::getLocalNode() const
 {
-    return _impl->getNode();
+    return _impl->getLocalNode();
 }
 
 co::Zeroconf Sender::getZeroconf()
@@ -203,7 +205,7 @@ dash::Context& Sender::getContext()
 bool Sender::hasPeers() const
 {
     co::Nodes peers;
-    _impl->getNode()->getNodes( peers, false );
+    _impl->getLocalNode()->getNodes( peers, false );
     return !peers.empty();
 }
 
@@ -212,9 +214,9 @@ dash::Nodes Sender::getNodes() const
     return _impl->getNodes();
 }
 
-void Sender::registerNode( dash::NodePtr node )
+void Sender::registerNode( dash::NodePtr node, const UUID& identifier )
 {
-    _impl->registerNode( node );
+    _impl->registerNode( node, identifier );
 }
 
 void Sender::deregisterNode( dash::NodePtr node )

@@ -66,7 +66,7 @@ public:
     CODASH_API ~Sender();
 
     /** @return the used local node. @version 0.1 */
-    CODASH_API co::ConstLocalNodePtr getNode() const;
+    CODASH_API co::ConstLocalNodePtr getLocalNode() const;
 
     /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
@@ -84,12 +84,15 @@ public:
      * Register a dash::Node to this sender.
      *
      * Newly registered nodes will be propagated to connected receivers after
-     * the next send().
+     * the next send(). Each node can be mapped individually on the receiving
+     * side using its identifier.
      *
      * @param node the dash::Node to be registered.
+     * @param identifier identify this node on the receiving side to map it
      * @version 0.1
      */
-    CODASH_API void registerNode( dash::NodePtr node );
+    CODASH_API void registerNode( dash::NodePtr node,
+                                  const UUID& identifier );
 
     /**
      * Deregister a dash::Node from this sender.

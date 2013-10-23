@@ -70,7 +70,7 @@ public:
     CODASH_API static void destroy( ReceiverPtr receiver );
 
     /** @return the used local node. @version 0.1 */
-    CODASH_API co::ConstLocalNodePtr getNode() const;
+    CODASH_API co::ConstLocalNodePtr getLocalNode() const;
 
     /** @return the Zeroconf communicator handle of the local node. @version 0.1 */
     CODASH_API co::Zeroconf getZeroconf();
@@ -107,13 +107,38 @@ public:
     /** @return the dash::Context of this receiver. @version 0.1 */
     CODASH_API dash::Context& getContext();
 
-    /** @return the list of all received dash::Nodes. @version 0.1 */
-    CODASH_API const dash::Nodes& getNodes() const;
+    /**
+     * @return the list of all mapped dash::Nodes
+     * @version 0.1
+     */
+    CODASH_API dash::Nodes getNodes() const;
+
+    /** Get an already mapped dash::Node matching the given identifier.
+     *
+     * @param identifier the node ID that was used for registering this node
+     * @return the dash::Node to the given identifier if mapped, 0 otherwise
+     * @version 0.1
+     */
+    CODASH_API dash::NodePtr getNode( const UUID& identifier ) const;
+
+    /** Map a dash node to the master instance on the sender side.
+     *
+     * If the node was already mapped, the already mapped instance will be
+     * returned. If the given identifier was not registered on the sender, an
+     * empty dash::Node will be returned.
+     *
+     * @param identifier the node was registered with this identifier on the
+     *                   sender side
+     * @return the mapped dash::Node with its latest version if mapping was
+     *         successful, 0 otherwise
+     * @version 0.1
+     */
+    CODASH_API dash::NodePtr mapNode( const UUID& identifier );
 
     /** Receive one new change from the connected sender.
      *
-     * It will apply the next version on all dash::Nodes. The sync call will
-     * block until there is a new version coming from the sender or if the
+     * It will apply the next version on all mapped dash::Nodes. The sync call
+     * will block until there is a new version coming from the sender or if the
      * timeout was reached.
      * @sa co::Global::getKeepaliveTimeout()
      *
