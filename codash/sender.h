@@ -89,9 +89,10 @@ public:
      *
      * @param node the dash::Node to be registered.
      * @param identifier identify this node on the receiving side to map it
+     * @return true if the node was successfully registered
      * @version 0.1
      */
-    CODASH_API void registerNode( dash::NodePtr node,
+    CODASH_API bool registerNode( dash::NodePtr node,
                                   const UUID& identifier );
 
     /**
@@ -101,9 +102,10 @@ public:
      * the next send().
      *
      * @param node the dash::Node to be deregistered.
+     * @return true if the node was successfully deregistered
      * @version 0.1
      */
-    CODASH_API void deregisterNode( dash::NodePtr node );
+    CODASH_API bool deregisterNode( dash::NodePtr node );
 
     /**
      * Apply provided changes and propagate them to connected receivers.

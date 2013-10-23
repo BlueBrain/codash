@@ -58,8 +58,8 @@ int codash::test::main( int argc, char **argv )
         dash::NodePtr lateNode = new dash::Node;
 
         // register 2, map 1 node
-        sender.registerNode( node, nodeID );
-        sender.registerNode( lateNode, lateNodeID );
+        TEST( sender.registerNode( node, nodeID ));
+        TEST( sender.registerNode( lateNode, lateNodeID ));
         sender.send( mainCtx.commit( ));
         receiver.sync();
         dash::NodePtr newNode = receiver.mapNode( nodeID );
@@ -103,8 +103,8 @@ int codash::test::main( int argc, char **argv )
         TEST( *lateNode == *newLateNode );
         TEST( newLateNode->getAttribute( 0 )->get<int>() == 5 );
 
-        sender.deregisterNode( node );
-        sender.deregisterNode( lateNode );
+        TEST( sender.deregisterNode( node ));
+        TEST( sender.deregisterNode( lateNode ));
         sender.send( mainCtx.commit( ));
         receiver.sync();
         TEST( receiver.getNodes().empty( ));
