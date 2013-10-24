@@ -92,7 +92,6 @@ public:
         dash::Context::getCurrent().map( dashNode, *_context );
 
         NodePtr node( new Node( dashNode ));
-        node->setID( identifier );
         _nodeMap[ identifier ] = node;
         setDirty( DIRTY_NODES );
 
@@ -137,10 +136,11 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            IDSet nodes;
+            IDMap nodes;
             BOOST_FOREACH( const NodeMap::value_type& entry, _nodeMap )
             {
-                nodes.insert( entry.first );
+                nodes.insert( std::make_pair( entry.first,
+                                              entry.second->getID( )));
             }
             os << nodes;
         }

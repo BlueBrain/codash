@@ -144,7 +144,7 @@ public:
 
     dash::NodePtr mapNode( const UUID& identifier )
     {
-        IDSet::const_iterator i = _allNodes.find( identifier );
+        IDMap::const_iterator i = _allNodes.find( identifier );
         if( i == _allNodes.end( ))
             return dash::NodePtr();
 
@@ -152,7 +152,7 @@ public:
         if( j != _nodes.end( ))
             return j->second->getValue();
 
-        Node* node = static_cast< Node* >( _objectMap->map( identifier ));
+        Node* node = static_cast< Node* >( _objectMap->map( i->second ));
         _nodes.insert( std::make_pair( identifier, node ));
         return node->getValue();
     }
@@ -191,7 +191,7 @@ public:
     {
         if( dirtyBits & DIRTY_NODES )
         {
-            IDSet newNodes;
+            IDMap newNodes;
             is >> newNodes;
 
             LBASSERT( _nodesToUnmap.empty( ));
@@ -210,7 +210,8 @@ public:
             {
                 _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
                                                   _localNode.get(), _objectMap,
-                                                  ov ));
+                                                  ov.identifier, _proxyNode,
+                                                  ov.version ));
             }
         }
 
@@ -263,7 +264,7 @@ private:
         deserialize( istream, co::Serializable::DIRTY_ALL );
         _mapQueue.push_back( boost::bind( &co::LocalNode::mapObject,
                                           _localNode.get(), this, objectID,
-                                          co::VERSION_NONE ));
+                                          _proxyNode, co::VERSION_NONE ));
         _initialized = true;
     }
 
@@ -278,9 +279,9 @@ private:
 
     void _processUnmappings()
     {
-        BOOST_FOREACH( const IDSet::value_type& entry, _nodesToUnmap )
+        BOOST_FOREACH( const IDMap::value_type& entry, _nodesToUnmap )
         {
-            NodeMap::const_iterator i = _nodes.find( entry );
+            NodeMap::const_iterator i = _nodes.find( entry.first );
             _objectMap->unmap( i->second );
             _nodes.erase( i );
         }
@@ -292,8 +293,8 @@ private:
 
     co::NodePtr _proxyNode;
     std::deque< WorkFunc > _mapQueue;
-    IDSet _allNodes;
-    IDSet _nodesToUnmap;
+    IDMap _allNodes;
+    IDMap _nodesToUnmap;
     NodeMap _nodes;
     lunchbox::MTQueue< uint128_t > _queuedVersions;
     uint128_t _objectMapVersion;
