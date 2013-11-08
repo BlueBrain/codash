@@ -157,7 +157,7 @@ public:
         return node->getValue();
     }
 
-    virtual bool syncOne()
+    virtual bool syncNext()
     {
         uint128_t version;
         while( !_queuedVersions.timedPop( co::Global::getKeepaliveTimeout(),
@@ -173,7 +173,14 @@ public:
                 LBWARN << "Got timeout while waiting for new data" << std::endl;
         }
 
+        // can happen if we late joined; the sender does not wait for us as
+        // there are other receiver(s) which continue nonetheless
+        if( getVersion() > version )
+            return false;
+
         Communicator::sync( version );
+
+        LBASSERT( _objectMapVersion >= _objectMap->getVersion( ));
         _objectMap->sync( _objectMapVersion );
 
         _processUnmappings();
@@ -409,7 +416,7 @@ dash::NodePtr Receiver::mapNode( const UUID& identifier )
 
 bool Receiver::sync()
 {
-    return _impl->syncOne();
+    return _impl->syncNext();
 }
 
 void Receiver::registerNewVersionHandler( const VersionHandler& func )
