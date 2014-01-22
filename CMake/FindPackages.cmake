@@ -94,7 +94,7 @@ if(Boost_name)
   endif()
 endif()
 
-set(CODASH_BUILD_DEBS autoconf;automake;cmake;doxygen;git;git-review;git-svn;libavahi-compat-libdnssd-dev;libboost-date-time-dev;libboost-program-options-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libibverbs-dev;libjpeg-turbo8-dev;librdmacm-dev;libtclap-dev;libturbojpeg;libudt-dev;ninja-build;pkg-config;subversion)
+set(CODASH_BUILD_DEBS autoconf;automake;cmake;doxygen;git;git-review;git-svn;lcov;libavahi-compat-libdnssd-dev;libboost-date-time-dev;libboost-program-options-dev;libboost-regex-dev;libboost-serialization-dev;libboost-system-dev;libhwloc-dev;libibverbs-dev;libjpeg-turbo8-dev;librdmacm-dev;libturbojpeg;libudt-dev;ninja-build;pkg-config;subversion)
 
 set(CODASH_DEPENDS dash;Collage;Boost)
 
