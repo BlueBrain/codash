@@ -29,6 +29,7 @@
 #include <co/objectMap.h>
 
 #include <lunchbox/hash.h>
+#include <lunchbox/scopedMutex.h>
 
 #include <boost/foreach.hpp>
 #include <boost/bind.hpp>

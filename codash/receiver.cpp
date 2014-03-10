@@ -27,6 +27,7 @@
 #include <co/global.h>
 #include <co/objectMap.h>
 
+#include <lunchbox/monitor.h>
 #include <lunchbox/mtQueue.h>
 
 #include <boost/bind.hpp>

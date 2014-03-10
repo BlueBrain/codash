@@ -25,6 +25,9 @@
 
 #include <co/serializable.h>
 #include <co/zeroconf.h>
+#include <lunchbox/lock.h>
+#include <lunchbox/lockable.h>
+#include <lunchbox/spinLock.h>
 
 #include <dash/context.h>
 
