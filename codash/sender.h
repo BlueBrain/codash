@@ -24,6 +24,7 @@
 #include <codash/api.h>
 #include <codash/types.h>
 
+#include <boost/noncopyable.hpp>
 #include <co/connectionDescription.h>
 #include <dash/types.h>
 
@@ -44,7 +45,7 @@ namespace detail { class Sender; }
  * receivers. This sender maintains an own dash context used for tracking
  * changes on the registered nodes.
  */
-class Sender
+class Sender : private boost::noncopyable
 {
 public:
     /**
