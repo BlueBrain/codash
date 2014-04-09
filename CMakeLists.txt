@@ -1,13 +1,13 @@
 
-# Copyright (c) 2012 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+# Copyright (c) 2012-2014 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(codash)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake
                               ${CMAKE_SOURCE_DIR}/CMake/common)
-include(.gitexternals)
 
+include(GitExternal)
 include(Buildyard)
 if(BUILDYARD_STOP)
   return()
@@ -17,19 +17,13 @@ set(VERSION_MAJOR "0")
 set(VERSION_MINOR "1")
 set(VERSION_PATCH "0")
 
-set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
-if(VERSION_MINOR VERSION_LESS 10)
-  set(VERSION_ABI ${VERSION_MAJOR}0${VERSION_MINOR})
-else()
-  set(VERSION_ABI ${VERSION_MAJOR}${VERSION_MINOR})
-endif()
+set(CODASH_DESCRIPTION
+  "Serialization & distribution support for DASH via Collage")
+set(COMMON_PROJECT_DOMAIN ch.epfl.bluebrain)
 
 include(Common)
-include(Revision)
-include(UpdateFile)
-
 include(FindPackages)
-set(CODASH_DEPENDENT_LIBRARIES Collage dash)
+set(CODASH_DEPENDENT_LIBRARIES Collage dash Lunchbox)
 
 add_subdirectory(codash)
 add_subdirectory(tests)
@@ -39,10 +33,4 @@ include(DoxygenRule)
 
 add_custom_target(package COMMENT "Packaging not done yet")
 # include(CPackConfig)
-
-set(CTEST_CUSTOM_WARNING_EXCEPTION ${CTEST_CUSTOM_WARNING_EXCEPTION}
-  # http://public.kitware.com/Bug/view.php?id=10179
-  "ld: warning: duplicate dylib")
-include(CTest)
-
 include(PackageConfig)

@@ -1,6 +1,8 @@
 
-# Copyright (c) 2012, EPFL/Blue Brain Project
+# Copyright (c) 2012-2014, EPFL/Blue Brain Project
 #                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+
+# Change this number when adding tools to force a CMake run: 1
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 
