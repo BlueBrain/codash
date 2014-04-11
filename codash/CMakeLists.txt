@@ -1,58 +1,32 @@
+# Copyright (c) 2012-2014 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
 
-# Copyright (c) 2012 Daniel Nachbaur <daniel.nachbaur@epfl.ch>
-
-update_file(${CMAKE_CURRENT_SOURCE_DIR}/version.in.h
-  ${OUTPUT_INCLUDE_DIR}/codash/version.h)
-
-set(CODASH_HEADERS # public, installed
-  ${OUTPUT_INCLUDE_DIR}/codash/version.h
-  api.h
-  codash.h
+set(CODASH_PUBLIC_HEADERS # public, installed
+  ${COMMON_INCLUDES}
   distributable.h
   receiver.h
   sender.h
   types.h
 )
 
-set(CODASH_DETAIL_HEADERS # private, installed
-)
-
 set(CODASH_SOURCES
+  ${COMMON_SOURCES}
   codash.cpp
   receiver.cpp
   sender.cpp
-  version.cpp
-)
-
-set(CODASH_DETAIL_SOURCES
   detail/communicator.h
   detail/communicator.cpp
   detail/objectFactory.h
-  detail/types.h
-)
+  detail/types.h)
 
-set(CODASH_ALL ${CODASH_HEADERS} ${CODASH_SOURCES})
-set(CODASH_DETAIL_ALL ${CODASH_DETAIL_HEADERS} ${CODASH_DETAIL_SOURCES})
+set(CODASH_ALL
+  ${CODASH_PUBLIC_HEADERS}
+  ${CODASH_SOURCES})
 
-source_group(\\ FILES CMakeLists.txt ${CODASH_ALL})
-source_group(detail FILES ${CODASH_DETAIL_ALL})
+set(CODASH_LINK_LIBRARIES ${LUNCHBOX_LIBRARIES} ${DASH_LIBRARIES}
+  ${COLLAGE_LIBRARIES} ${Boost_LIBRARIES})
 
-set(LIBRARY codash)
-set(LIB_INCLUDE codash)
+common_library(codash)
 
-add_library(${LIBRARY} SHARED ${CODASH_ALL} ${CODASH_DETAIL_ALL})
-target_link_libraries(${LIBRARY} ${DASH_LIBRARIES} ${COLLAGE_LIBRARIES}
-  ${Boost_LIBRARIES})
-set_target_properties(${LIBRARY}
-  PROPERTIES VERSION ${VERSION} SOVERSION ${VERSION_ABI}
-  COMPILE_DEFINITIONS CODASH_SHARED
-)
+source_group(\\ FILES CMakeLists.txt)
+source_group(codash FILES ${CODASH_PUBLIC_HEADERS} ${CODASH_SOURCES})
 
-install(FILES ${CODASH_HEADERS}
-        DESTINATION include/${LIB_INCLUDE} COMPONENT dev)
-install(FILES ${CODASH_DETAIL_HEADERS}
-        DESTINATION include/${LIB_INCLUDE}/detail COMPONENT dev)
-install(TARGETS ${LIBRARY}
-        ARCHIVE DESTINATION lib COMPONENT dev
-        RUNTIME DESTINATION bin COMPONENT lib
-        LIBRARY DESTINATION lib COMPONENT lib)

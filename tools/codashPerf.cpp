@@ -20,17 +20,21 @@
 
 #include <codash/codash.h>
 #include <dash/dash.h>
+#include <lunchbox/clock.h>
 
 #pragma warning( disable: 4275 )
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <boost/thread/thread.hpp>
 #pragma warning( default: 4275 )
 
 #include <boost/serialization/vector.hpp>
+
 typedef std::vector< int > DataType;
 SERIALIZABLEANY( DataType )
 
+namespace bp = boost::posix_time;
 
 const uint16_t port = 4242u;
 const codash::UUID dataNodeID( lunchbox::make_uint128( "codash::perf::dataNodeID" ));
@@ -169,7 +173,7 @@ private:
 
         // wait for connection
         while( !sender.hasPeers( ))
-            lunchbox::sleep( 500u );
+            boost::this_thread::sleep( bp::milliseconds( 500 ));
 
         lunchbox::Clock clock;
         for( uint32_t i = 0; i < _numSends; ++i )
@@ -188,7 +192,7 @@ private:
 
         // wait for receiver completion
         while( sender.hasPeers( ))
-            lunchbox::sleep( 500u );
+            boost::this_thread::sleep( bp::milliseconds( 500 ));
 
         return EXIT_SUCCESS;
     }

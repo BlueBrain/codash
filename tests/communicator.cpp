@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2012, EPFL/Blue Brain Project
+/* Copyright (c) 2012-2014, EPFL/Blue Brain Project
  *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CoDASH <https://github.com/BlueBrain/codash>
@@ -24,6 +24,7 @@
 #include <codash/codash.h>
 #include <co/co.h>
 #include <dash/dash.h>
+#include <lunchbox/rng.h>
 
 #ifdef __APPLE__
 // following boost include causes shadowing warning. See also:
