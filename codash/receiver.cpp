@@ -137,13 +137,13 @@ public:
         return nodes;
     }
 
-    dash::NodePtr getNode( const UUID& identifier ) const
+    dash::NodePtr getNode( const uint128_t& identifier ) const
     {
         NodeMap::const_iterator i = _nodes.find( identifier );
         return i != _nodes.end() ? i->second->getValue() : dash::NodePtr();
     }
 
-    dash::NodePtr mapNode( const UUID& identifier )
+    dash::NodePtr mapNode( const uint128_t& identifier )
     {
         IDMap::const_iterator i = _allNodes.find( identifier );
         if( i == _allNodes.end( ))
@@ -264,7 +264,7 @@ private:
     }
 
     void _handleInit( const uint128_t& groupID, const uint128_t& typeID,
-                      const UUID& objectID, co::DataIStream& istream )
+                      const uint128_t& objectID, co::DataIStream& istream )
     {
         if( groupID != _groupID || typeID != _typeInit )
             return;
@@ -296,7 +296,7 @@ private:
         _nodesToUnmap.clear();
     }
 
-    typedef stde::hash_map< UUID, Node* > NodeMap;
+    typedef stde::hash_map< uint128_t, Node* > NodeMap;
     typedef std::vector< VersionHandler > VersionHandlers;
 
     co::NodePtr _proxyNode;
@@ -405,12 +405,12 @@ dash::Nodes Receiver::getNodes() const
     return _impl->getNodes();
 }
 
-dash::NodePtr Receiver::getNode( const UUID& identifier ) const
+dash::NodePtr Receiver::getNode( const uint128_t& identifier ) const
 {
     return _impl->getNode( identifier );
 }
 
-dash::NodePtr Receiver::mapNode( const UUID& identifier )
+dash::NodePtr Receiver::mapNode( const uint128_t& identifier )
 {
     return _impl->mapNode( identifier );
 }

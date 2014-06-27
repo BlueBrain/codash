@@ -119,7 +119,7 @@ public:
      * @return the dash::Node to the given identifier if mapped, 0 otherwise
      * @version 0.1
      */
-    CODASH_API dash::NodePtr getNode( const UUID& identifier ) const;
+    CODASH_API dash::NodePtr getNode( const uint128_t& identifier ) const;
 
     /** Map a dash node to the master instance on the sender side.
      *
@@ -133,7 +133,7 @@ public:
      *         successful, 0 otherwise
      * @version 0.1
      */
-    CODASH_API dash::NodePtr mapNode( const UUID& identifier );
+    CODASH_API dash::NodePtr mapNode( const uint128_t& identifier );
 
     /** Receive one new change from the connected sender.
      *

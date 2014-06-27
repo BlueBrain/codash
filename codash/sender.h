@@ -87,7 +87,7 @@ public:
      * @return the dash::Node to the given identifier if mapped, 0 otherwise
      * @version 0.1
      */
-    CODASH_API dash::NodePtr getNode( const UUID& identifier ) const;
+    CODASH_API dash::NodePtr getNode( const uint128_t& identifier ) const;
 
     /**
      * Register a dash::Node to this sender.
@@ -102,7 +102,7 @@ public:
      * @version 0.1
      */
     CODASH_API bool registerNode( dash::NodePtr node,
-                                  const UUID& identifier );
+                                  const uint128_t& identifier );
 
     /**
      * Deregister a dash::Node from this sender.
@@ -114,7 +114,7 @@ public:
      * @return true if the node was successfully deregistered
      * @version 0.1
      */
-    CODASH_API bool deregisterNode( const UUID& identifier );
+    CODASH_API bool deregisterNode( const uint128_t& identifier );
 
     /**
      * Apply provided changes and propagate them to connected receivers.

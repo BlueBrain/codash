@@ -37,7 +37,7 @@ SERIALIZABLEANY( DataType )
 namespace bp = boost::posix_time;
 
 const uint16_t port = 4242u;
-const codash::UUID dataNodeID( lunchbox::make_uint128( "codash::perf::dataNodeID" ));
+const codash::uint128_t dataNodeID( lunchbox::make_uint128( "codash::perf::dataNodeID" ));
 
 class Perftool
 {

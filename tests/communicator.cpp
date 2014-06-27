@@ -37,8 +37,8 @@ SERIALIZABLEANY( std::vector< int > )
 
 int codash::test::main( int argc, char **argv )
 {
-    const codash::UUID nodeID( lunchbox::make_uint128( "codash::test::nodeID" ));
-    const codash::UUID lateNodeID( lunchbox::make_uint128( "codash::test::lateNodeID" ));
+    const codash::uint128_t nodeID( lunchbox::make_uint128( "codash::test::nodeID" ));
+    const codash::uint128_t lateNodeID( lunchbox::make_uint128( "codash::test::lateNodeID" ));
     dash::Context& mainCtx = dash::Context::getMain( argc, argv );
     {
         lunchbox::RNG rng;

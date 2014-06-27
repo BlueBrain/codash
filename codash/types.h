@@ -35,7 +35,6 @@ class Sender;
 typedef lunchbox::RefPtr< Receiver > ReceiverPtr;
 
 using lunchbox::uint128_t;
-using lunchbox::UUID;
 
 /** Function signature for new version handler. @version 1.0 */
 typedef boost::function< void() > VersionHandler;

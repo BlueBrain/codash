@@ -41,7 +41,7 @@ static uint128_t _initCmd( make_uint128( "codash::detail::_initCmd" ));
 typedef Distributable< dash::Node > Node;
 typedef boost::shared_ptr< Node > NodePtr;
 
-typedef stde::hash_map< UUID, UUID > IDMap;
+typedef stde::hash_map< uint128_t, uint128_t > IDMap;
 
 }
 }

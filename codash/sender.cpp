@@ -39,7 +39,7 @@ namespace codash
 namespace detail
 {
 
-typedef stde::hash_map< UUID, NodePtr > NodeMap;
+typedef stde::hash_map< uint128_t, NodePtr > NodeMap;
 
 class Sender : public Communicator
 {
@@ -77,13 +77,13 @@ public:
         return nodes;
     }
 
-    dash::NodePtr getNode( const UUID& identifier ) const
+    dash::NodePtr getNode( const uint128_t& identifier ) const
     {
         NodeMap::const_iterator i = _nodeMap.find( identifier );
         return i != _nodeMap.end() ? i->second->getValue() : dash::NodePtr();
     }
 
-    bool registerNode( dash::NodePtr dashNode, const UUID& identifier )
+    bool registerNode( dash::NodePtr dashNode, const uint128_t& identifier )
     {
         if( _nodeMap.find( identifier ) != _nodeMap.end( ))
             return false;
@@ -99,7 +99,7 @@ public:
         return _objectMap->register_( node.get(), OBJECTTYPE_NODE );
     }
 
-    bool deregisterNode( const UUID& identifier )
+    bool deregisterNode( const uint128_t& identifier )
     {
         if( _nodeMap.find( identifier ) == _nodeMap.end( ))
             return false;
@@ -228,17 +228,17 @@ dash::Nodes Sender::getNodes() const
     return _impl->getNodes();
 }
 
-dash::NodePtr Sender::getNode( const UUID& identifier ) const
+dash::NodePtr Sender::getNode( const uint128_t& identifier ) const
 {
     return _impl->getNode( identifier );
 }
 
-bool Sender::registerNode( dash::NodePtr node, const UUID& identifier )
+bool Sender::registerNode( dash::NodePtr node, const uint128_t& identifier )
 {
     return _impl->registerNode( node, identifier );
 }
 
-bool Sender::deregisterNode( const UUID& identifier )
+bool Sender::deregisterNode( const uint128_t& identifier )
 {
     return _impl->deregisterNode( identifier );
 }
