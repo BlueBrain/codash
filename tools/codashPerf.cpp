@@ -78,7 +78,7 @@ private:
             ( "version,v", "Show version" )
             ( "connect,c", arg::value< std::string >(),
               "Connect to remote node" )
-            ( "dataSize,d", arg::value< uint32_t >()->default_value( _dataSize ),
+            ( "dataSize,d", arg::value< size_t >()->default_value( _dataSize ),
               "Data size in bytes" )
             ( "numSends,n", arg::value< uint32_t >()->default_value( _numSends ),
               "Number of sends" )
@@ -112,7 +112,7 @@ private:
             _connectString = vm["connect"].as< std::string >();
 
         if( vm.count( "dataSize" ))
-            _dataSize = vm["dataSize"].as< uint32_t >();
+            _dataSize = vm["dataSize"].as< size_t >();
 
         if( vm.count( "numSends" ))
             _numSends = vm["numSends"].as< uint32_t >();
@@ -199,7 +199,7 @@ private:
 
     std::string _connectString;
     uint32_t _numSends;
-    uint32_t _dataSize;
+    size_t _dataSize;
     float _mBytesSec;
     dash::Context& _mainCtx;
 };
