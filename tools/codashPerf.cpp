@@ -1,6 +1,6 @@
 
-/* Copyright (c) 2012, EPFL/Blue Brain Project
- *                     Daniel Nachbaur <daniel.nachbaur@epfl.ch>
+/* Copyright (c) 2012-2014, EPFL/Blue Brain Project
+ *                          Daniel Nachbaur <daniel.nachbaur@epfl.ch>
  *
  * This file is part of CoDASH <https://github.com/BlueBrain/codash>
  *
@@ -21,20 +21,18 @@
 #include <codash/codash.h>
 #include <dash/dash.h>
 #include <lunchbox/clock.h>
+#include <lunchbox/sleep.h>
 
 #pragma warning( disable: 4275 )
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
-#include <boost/thread/thread.hpp>
 #pragma warning( default: 4275 )
 
 #include <boost/serialization/vector.hpp>
 
 typedef std::vector< int > DataType;
 SERIALIZABLEANY( DataType )
-
-namespace bp = boost::posix_time;
 
 const uint16_t port = 4242u;
 const codash::uint128_t dataNodeID( lunchbox::make_uint128( "codash::perf::dataNodeID" ));
@@ -173,7 +171,7 @@ private:
 
         // wait for connection
         while( !sender.hasPeers( ))
-            boost::this_thread::sleep( bp::milliseconds( 500 ));
+            lunchbox::sleep( 500 /*ms*/ );
 
         lunchbox::Clock clock;
         for( uint32_t i = 0; i < _numSends; ++i )
@@ -192,7 +190,7 @@ private:
 
         // wait for receiver completion
         while( sender.hasPeers( ))
-            boost::this_thread::sleep( bp::milliseconds( 500 ));
+            lunchbox::sleep( 500 /*ms*/ );
 
         return EXIT_SUCCESS;
     }
