@@ -6,7 +6,7 @@ find_package(Boost 1.41.0 COMPONENTS program_options serialization system thread
 if(NOT Boost_FOUND AND NOT BOOST_FOUND)
   set(FIND_REQUIRED_FAILED "${FIND_REQUIRED_FAILED} Boost")
 endif()
-find_package(dash 1.1.0 QUIET)
+find_package(dash 1.0 QUIET)
 if(NOT dash_FOUND AND NOT DASH_FOUND)
   set(FIND_REQUIRED_FAILED "${FIND_REQUIRED_FAILED} dash")
 endif()
