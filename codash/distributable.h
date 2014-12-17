@@ -26,9 +26,8 @@
 #include <co/dataIStream.h>
 #include <co/dataOStreamArchive.h>
 #include <co/dataIStreamArchive.h>
-
-#include <lunchbox/plugins/compressorTypes.h>
 #include <lunchbox/anySerialization.h>
+#include <pression/plugins/compressorTypes.h>
 
 
 namespace codash
