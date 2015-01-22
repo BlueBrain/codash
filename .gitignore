@@ -6,3 +6,7 @@ doc/man
 CMakeLists.txt.user*
 Makefile
 CMake/common
+Collage/
+Lunchbox/
+Pression/
+dash/
