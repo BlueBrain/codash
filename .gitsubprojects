@@ -1,4 +1,4 @@
 # -*- mode: cmake -*-
-git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git 11b2496)
-git_subproject(dash https://github.com/BlueBrain/dash.git f0dee0d)
-git_subproject(Collage https://github.com/Eyescale/Collage.git d18b552)
+git_subproject(Lunchbox https://github.com/Eyescale/Lunchbox.git be0d61d)
+git_subproject(dash https://github.com/BlueBrain/dash.git 94b1330)
+git_subproject(Collage https://github.com/Eyescale/Collage.git 25307f2)
